@@ -36,6 +36,9 @@
             max-width: 750px;
             width: 100%;
             padding: 60px 25px;
+            /* Flexbox para empujar el footer al final si el contenido es corto */
+            display: flex;
+            flex-direction: column; 
         }
 
         /* --- ENCABEZADO --- */
@@ -44,7 +47,7 @@
             margin-bottom: 60px;
             border-bottom: 1px solid #ddd;
             padding-bottom: 30px;
-            transition: all 0.8s ease; /* Suaviza el cambio de padding/border si fuera necesario */
+            transition: all 0.8s ease; 
         }
 
         /* --- FOTO DE PERFIL CON ANIMACIÓN --- */
@@ -54,30 +57,28 @@
             object-fit: cover;
             border-radius: 12px;
             display: block;
-            margin: 0 auto 25px auto; /* Margen inicial */
+            margin: 0 auto 25px auto; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             
-            /* Propiedades para la animación */
-            max-height: 150px; /* Altura máxima cuando está visible */
+            /* Animación de colapso */
+            max-height: 150px; 
             opacity: 1;
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Curva de animación suave */
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
             overflow: hidden;
         }
 
-        /* Clase que inyectaremos con JS para ocultar la foto */
+        /* Clase para ocultar la foto */
         header.header-compact .profile-photo {
             max-height: 0;
             margin-bottom: 0;
             opacity: 0;
         }
 
-        /* --- TEXTOS DEL HEADER --- */
         h1 {
             font-size: 2.2rem;
             font-weight: bold;
             letter-spacing: 0.5px;
             margin-bottom: 5px;
-            transition: font-size 0.5s ease; /* Opcional: reduce sutilmente el nombre */
         }
 
         .subtitle {
@@ -128,11 +129,13 @@
         }
 
         /* --- CONTENIDO --- */
+        main {
+            flex-grow: 1; /* Esto asegura que el footer se quede abajo */
+        }
+
         .content-section {
             display: none;
             opacity: 0;
-            /* La animación de entrada del texto tiene un pequeño retraso 
-               para esperar a que la foto termine de subir */
             animation: fadeIn 0.8s ease forwards;
             padding-top: 10px;
         }
@@ -173,13 +176,25 @@
             opacity: 0.8;
         }
 
+        /* --- FOOTER --- */
         footer {
             margin-top: 80px;
             text-align: center;
-            font-size: 0.9rem;
-            color: #777;
             border-top: 1px solid #eee;
-            padding-top: 20px;
+            padding-top: 25px;
+            padding-bottom: 20px;
+        }
+
+        /* Estilo sutil para la bandera SVG */
+        .flag-svg {
+            display: inline-block;
+            vertical-align: middle;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .flag-svg:hover {
+            opacity: 1; /* Brilla un poco al pasar el mouse */
         }
 
         @keyframes fadeIn {
@@ -269,7 +284,13 @@
         </main>
 
         <footer>
-            &copy; 2025 José Rojas-Quiroz.
+            <svg width="26" height="18" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" class="flag-svg">
+                <title>Peru</title>
+                <rect width="10" height="20" fill="#D91023"/>
+                <rect x="10" width="10" height="20" fill="#FFFFFF"/>
+                <rect x="20" width="10" height="20" fill="#D91023"/>
+                <rect width="30" height="20" fill="none" stroke="#eee" stroke-width="1"/>
+            </svg>
         </footer>
     </div>
 
@@ -279,16 +300,12 @@
             const header = document.getElementById('main-header');
             
             if (sectionId === 'home') {
-                // Si es home, quitamos la clase compacta (la foto aparece)
                 header.classList.remove('header-compact');
             } else {
-                // Si es cualquier otra, ponemos la clase compacta (la foto se oculta)
                 header.classList.add('header-compact');
             }
 
-            // --- 2. LÓGICA DE LAS PESTAÑAS (Igual que antes) ---
-            
-            // Ocultar todas las secciones
+            // --- 2. LÓGICA DE LAS PESTAÑAS ---
             const sections = document.querySelectorAll('.content-section');
             sections.forEach(section => {
                 section.classList.remove('active-section');
@@ -297,17 +314,14 @@
                 section.style.animation = null; 
             });
 
-            // Quitar clase activa de botones
             const buttons = document.querySelectorAll('nav button');
             buttons.forEach(btn => {
                 btn.classList.remove('active-btn');
             });
 
-            // Mostrar sección nueva
             const activeSection = document.getElementById(sectionId);
             activeSection.classList.add('active-section');
 
-            // Activar botón
             const activeButton = document.getElementById('btn-' + sectionId);
             activeButton.classList.add('active-btn');
         }
