@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Nombre | Investigador & Académico</title>
+    <style>
+        /* --- VARIABLES Y CONFIGURACIÓN --- */
+        :root {
+            --bg-color: #f9f9f9;
+            --text-color: #333;
+            --accent-color: #2c3e50; /* Azul oscuro elegante */
+            --secondary-color: #666;
+            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Georgia', serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .container {
+            max-width: 800px;
+            width: 100%;
+            padding: 40px 20px;
+            background: #fff;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.03);
+            
+            /* Animación de entrada suave */
+            opacity: 0;
+            animation: fadeIn 1.2s ease-out forwards;
+        }
+
+        /* --- ENCABEZADO Y NAV --- */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+        }
+
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Efecto de subrayado sutil al pasar el mouse */
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* --- SECCIONES --- */
+        section {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify; /* Justificado para look académico */
+        }
+
+        /* --- LISTA DE PUBLICACIONES --- */
+        .publication-list {
+            list-style: none;
+        }
+
+        .publication-item {
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 2px solid #eee;
+            transition: border-color 0.3s ease;
+        }
+
+        .publication-item:hover {
+            border-left: 2px solid var(--accent-color);
+        }
+
+        .pub-title {
+            font-weight: bold;
+            display: block;
+        }
+
+        .pub-meta {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-style: italic;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 80px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        /* --- ANIMACIÓN --- */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            nav a { display: block; margin: 10px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Tu Nombre Completo</h1>
+            <p class="subtitle">Doctorando en Física Teórica | Universidad de Ejemplo</p>
+            
+            <nav>
+                <a href="#about">Sobre mí</a>
+                <a href="#research">Investigación</a>
+                <a href="#publications">Publicaciones</a>
+                <a href="#contact">Contacto</a>
+            </nav>
+        </header>
+
+        <main>
+            <section id="about">
+                <h2>Sobre mí</h2>
+                <p>
+                    Bienvenido a mi sitio personal. Soy investigador especializado en [Tu Área]. 
+                    Mi trabajo se centra en comprender los mecanismos fundamentales de [Tu Tema].
+                    Actualmente formo parte del grupo de investigación X en la Universidad Y.
+                </p>
+                <p>
+                    Me interesa la intersección entre la teoría y la aplicación práctica, buscando soluciones 
+                    elegantes a problemas complejos.
+                </p>
+            </section>
+
+            <section id="research">
+                <h2>Intereses de Investigación</h2>
+                <ul>
+                    <li>Modelado matemático de sistemas complejos.</li>
+                    <li>Análisis de datos y Big Data en ciencias sociales.</li>
+                    <li>Ética en la inteligencia artificial.</li>
+                </ul>
+            </section>
+
+            <section id="publications">
+                <h2>Publicaciones Destacadas</h2>
+                <ul class="publication-list">
+                    <li class="publication-item">
+                        <span class="pub-title">Título del Artículo Científico Importante (2024)</span>
+                        <span class="pub-meta">Journal of Academic Excellence, Vol 4, pp. 100-120.</span>
+                        <br>
+                        <a href="#">[PDF]</a> <a href="#">[DOI]</a>
+                    </li>
+                    <li class="publication-item">
+                        <span class="pub-title">Otro Artículo Relevante sobre tu Tema (2023)</span>
+                        <span class="pub-meta">Proceedings of the International Conference.</span>
+                        <br>
+                        <a href="#">[PDF]</a>
+                    </li>
+                </ul>
+            </section>
+
+            <section id="contact">
+                <h2>Contacto</h2>
+                <p>Estoy abierto a colaboraciones académicas. Puedes contactarme en:</p>
+                <p>
+                    <strong>Email:</strong> correo@universidad.edu<br>
+                    <strong>Twitter/X:</strong> @tu_usuario<br>
+                    <strong>Google Scholar:</strong> <a href="#">Perfil</a>
+                </p>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2025 Tu Nombre. Construido con diseño minimalista.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
