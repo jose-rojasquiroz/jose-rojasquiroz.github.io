@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Name | Researcher</title>
+    <title>José Rojas-Quiroz | Researcher</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dreampulse/computer-modern-web-font@master/fonts.css">
 
@@ -12,9 +12,8 @@
         :root {
             --bg-color: #ffffff;
             --text-color: #222;
-            --accent-color: #000; /* Negro puro para estilo LaTeX clásico */
             --link-color: #2c3e50;
-            --font-latex: "Computer Modern Serif", serif; /* La fuente mágica */
+            --font-latex: "Computer Modern Serif", serif;
         }
 
         * {
@@ -33,9 +32,8 @@
             min-height: 100vh;
         }
 
-        /* --- CONTENEDOR PRINCIPAL --- */
         .container {
-            max-width: 750px; /* Un poco más estrecho, estilo paper */
+            max-width: 750px;
             width: 100%;
             padding: 60px 25px;
         }
@@ -46,13 +44,40 @@
             margin-bottom: 60px;
             border-bottom: 1px solid #ddd;
             padding-bottom: 30px;
+            transition: all 0.8s ease; /* Suaviza el cambio de padding/border si fuera necesario */
         }
 
+        /* --- FOTO DE PERFIL CON ANIMACIÓN --- */
+        .profile-photo {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+            margin: 0 auto 25px auto; /* Margen inicial */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            
+            /* Propiedades para la animación */
+            max-height: 150px; /* Altura máxima cuando está visible */
+            opacity: 1;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); /* Curva de animación suave */
+            overflow: hidden;
+        }
+
+        /* Clase que inyectaremos con JS para ocultar la foto */
+        header.header-compact .profile-photo {
+            max-height: 0;
+            margin-bottom: 0;
+            opacity: 0;
+        }
+
+        /* --- TEXTOS DEL HEADER --- */
         h1 {
             font-size: 2.2rem;
             font-weight: bold;
             letter-spacing: 0.5px;
             margin-bottom: 5px;
+            transition: font-size 0.5s ease; /* Opcional: reduce sutilmente el nombre */
         }
 
         .subtitle {
@@ -67,13 +92,14 @@
             display: flex;
             justify-content: center;
             gap: 25px;
+            margin-top: 35px;
         }
 
         nav button {
             background: none;
             border: none;
             font-family: var(--font-latex);
-            font-size: 1rem;
+            font-size: 1.05rem;
             cursor: pointer;
             color: #666;
             position: relative;
@@ -85,7 +111,6 @@
             color: #000;
         }
 
-        /* Subrayado elegante para el botón activo */
         nav button::after {
             content: '';
             position: absolute;
@@ -102,14 +127,16 @@
             width: 100%;
         }
 
-        /* --- CONTENIDO Y TRANSICIONES --- */
+        /* --- CONTENIDO --- */
         .content-section {
-            display: none; /* Oculto por defecto */
+            display: none;
             opacity: 0;
+            /* La animación de entrada del texto tiene un pequeño retraso 
+               para esperar a que la foto termine de subir */
             animation: fadeIn 0.8s ease forwards;
+            padding-top: 10px;
         }
 
-        /* Clase para mostrar la sección activa */
         .content-section.active-section {
             display: block;
         }
@@ -120,38 +147,32 @@
             font-size: 1.1rem;
         }
 
-        /* --- ESTILOS DE LISTAS (Publicaciones) --- */
-        h2 {
-            font-size: 1.4rem;
-            border-bottom: 1px solid #000;
-            padding-bottom: 5px;
-            margin-bottom: 20px;
-            margin-top: 0;
-        }
-
         ul {
             list-style-type: none;
+            font-size: 1.1rem;
         }
 
         li {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            text-align: justify;
         }
 
         .year {
             font-weight: bold;
-            margin-right: 10px;
+            margin-right: 8px;
         }
 
         a {
             color: var(--link-color);
             text-decoration: none;
+            transition: opacity 0.2s;
         }
 
         a:hover {
             text-decoration: underline;
+            opacity: 0.8;
         }
 
-        /* --- FOOTER --- */
         footer {
             margin-top: 80px;
             text-align: center;
@@ -161,9 +182,8 @@
             padding-top: 20px;
         }
 
-        /* --- ANIMACIÓN --- */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
@@ -175,7 +195,9 @@
 <body>
 
     <div class="container">
-        <header>
+        <header id="main-header">
+            <img src="foto_joserojasquiroz.jpg" alt="José Rojas-Quiroz" class="profile-photo">
+            
             <h1>José Rojas-Quiroz</h1>
             <div class="subtitle">Predoctoral Research Assistant<br>Polytechnic University of Catalonia—BarcelonaTech</div>
             
@@ -194,35 +216,33 @@
                     Currently, I am working at Center for Land Policy and Valuations from the Polytechnic University of Catalonia, focusing on the intersection of urban planning and management and data science.
                 </p>
                 <p>
-                    My work aims to explore the fundamental principles of [Subject], seeking elegant mathematical solutions 
-                    to complex physical problems. I am particularly interested in how theoretical frameworks can be applied 
-                    to understand real-world phenomena.
+                    My work aims to explore fundamental principles, seeking elegant mathematical solutions 
+                    to complex problems. I am particularly interested in how theoretical frameworks can be applied 
+                    to understand real-world urban phenomena.
                 </p>
             </div>
 
             <div id="research" class="content-section">
-                <h2>Research Interests</h2>
                 <p>My primary research focuses on the following areas:</p>
                 <ul>
-                    <li>&bull; <strong>Complex Systems:</strong> Modeling dynamics in non-linear systems.</li>
-                    <li>&bull; <strong>Quantum Mechanics:</strong> Investigating entanglement entropy.</li>
-                    <li>&bull; <strong>Data Analysis:</strong> Statistical methods for large datasets.</li>
+                    <li>&bull; <strong>Urban Dynamics:</strong> Modeling valuation in complex metropolitan systems.</li>
+                    <li>&bull; <strong>Data Science in Planning:</strong> Applying statistical methods for large geospatial datasets.</li>
+                    <li>&bull; <strong>Land Policy:</strong> Investigating the economic impact of urban regulations.</li>
                 </ul>
             </div>
 
             <div id="publications" class="content-section">
-                <h2>Selected Publications</h2>
                 <ul>
                     <li>
                         <span class="year">[2024]</span> 
                         <strong>Title of the Very Important Paper.</strong> 
-                        <em>Journal of Physics A</em>. 
+                        <em>Journal of Urban Economics</em>. 
                         <a href="#">[PDF]</a> <a href="#">[DOI]</a>
                     </li>
                     <li>
                         <span class="year">[2023]</span> 
                         <strong>Another Significant Contribution to Science.</strong> 
-                        <em>Physical Review Letters</em>. 
+                        <em>Land Use Policy</em>. 
                         <a href="#">[PDF]</a>
                     </li>
                     <li>
@@ -234,7 +254,6 @@
             </div>
 
             <div id="contact" class="content-section">
-                <h2>Contact Information</h2>
                 <p>
                     I am always open to academic collaboration and discussion.
                 </p>
@@ -250,33 +269,45 @@
         </main>
 
         <footer>
-            &copy; 2025
+            &copy; 2025 José Rojas-Quiroz.
         </footer>
     </div>
 
     <script>
         function showSection(sectionId) {
-            // 1. Ocultar todas las secciones
+            // --- 1. LÓGICA DE LA FOTO ---
+            const header = document.getElementById('main-header');
+            
+            if (sectionId === 'home') {
+                // Si es home, quitamos la clase compacta (la foto aparece)
+                header.classList.remove('header-compact');
+            } else {
+                // Si es cualquier otra, ponemos la clase compacta (la foto se oculta)
+                header.classList.add('header-compact');
+            }
+
+            // --- 2. LÓGICA DE LAS PESTAÑAS (Igual que antes) ---
+            
+            // Ocultar todas las secciones
             const sections = document.querySelectorAll('.content-section');
             sections.forEach(section => {
                 section.classList.remove('active-section');
-                // Un pequeño truco para reiniciar la animación
                 section.style.animation = 'none';
                 section.offsetHeight; /* trigger reflow */
                 section.style.animation = null; 
             });
 
-            // 2. Quitar la clase 'active' de todos los botones
+            // Quitar clase activa de botones
             const buttons = document.querySelectorAll('nav button');
             buttons.forEach(btn => {
                 btn.classList.remove('active-btn');
             });
 
-            // 3. Mostrar la sección seleccionada
+            // Mostrar sección nueva
             const activeSection = document.getElementById(sectionId);
             activeSection.classList.add('active-section');
 
-            // 4. Marcar el botón como activo
+            // Activar botón
             const activeButton = document.getElementById('btn-' + sectionId);
             activeButton.classList.add('active-btn');
         }
