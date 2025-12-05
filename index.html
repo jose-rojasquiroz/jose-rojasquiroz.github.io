@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Nombre | Investigador & Académico</title>
+    <title>Your Name | Researcher</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dreampulse/computer-modern-web-font@master/fonts.css">
+
     <style>
-        /* --- VARIABLES Y CONFIGURACIÓN --- */
+        /* --- CONFIGURACIÓN ESTILO LATEX --- */
         :root {
-            --bg-color: #f9f9f9;
-            --text-color: #333;
-            --accent-color: #2c3e50; /* Azul oscuro elegante */
-            --secondary-color: #666;
-            --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --font-serif: 'Georgia', serif;
+            --bg-color: #ffffff;
+            --text-color: #222;
+            --accent-color: #000; /* Negro puro para estilo LaTeX clásico */
+            --link-color: #2c3e50;
+            --font-latex: "Computer Modern Serif", serif; /* La fuente mágica */
         }
 
         * {
@@ -22,144 +24,151 @@
         }
 
         body {
-            font-family: var(--font-main);
+            font-family: var(--font-latex);
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.6;
             display: flex;
             justify-content: center;
+            min-height: 100vh;
         }
 
         /* --- CONTENEDOR PRINCIPAL --- */
         .container {
-            max-width: 800px;
+            max-width: 750px; /* Un poco más estrecho, estilo paper */
             width: 100%;
-            padding: 40px 20px;
-            background: #fff;
-            min-height: 100vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.03);
-            
-            /* Animación de entrada suave */
-            opacity: 0;
-            animation: fadeIn 1.2s ease-out forwards;
+            padding: 60px 25px;
         }
 
-        /* --- ENCABEZADO Y NAV --- */
+        /* --- ENCABEZADO --- */
         header {
             text-align: center;
-            margin-bottom: 50px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 60px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 30px;
         }
 
         h1 {
-            font-size: 2.5rem;
-            color: var(--accent-color);
-            margin-bottom: 10px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
         }
 
         .subtitle {
-            color: var(--secondary-color);
             font-size: 1.1rem;
+            font-style: italic;
+            color: #444;
             margin-bottom: 25px;
         }
 
-        nav a {
-            margin: 0 15px;
-            text-decoration: none;
-            color: var(--secondary-color);
-            font-weight: 500;
+        /* --- NAVEGACIÓN --- */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            font-family: var(--font-latex);
+            font-size: 1rem;
+            cursor: pointer;
+            color: #666;
             position: relative;
             transition: color 0.3s ease;
+            padding: 5px;
         }
 
-        nav a:hover {
-            color: var(--accent-color);
+        nav button:hover, nav button.active-btn {
+            color: #000;
         }
 
-        /* Efecto de subrayado sutil al pasar el mouse */
-        nav a::after {
+        /* Subrayado elegante para el botón activo */
+        nav button::after {
             content: '';
             position: absolute;
             width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--accent-color);
-            transition: width 0.3s ease;
+            height: 1px;
+            bottom: 0;
+            left: 50%;
+            background-color: #000;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
         }
 
-        nav a:hover::after {
+        nav button:hover::after, nav button.active-btn::after {
             width: 100%;
         }
 
-        /* --- SECCIONES --- */
-        section {
-            margin-bottom: 60px;
+        /* --- CONTENIDO Y TRANSICIONES --- */
+        .content-section {
+            display: none; /* Oculto por defecto */
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
         }
 
-        h2 {
-            font-size: 1.5rem;
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            border-left: 4px solid var(--accent-color);
-            padding-left: 15px;
-        }
-
-        p {
-            margin-bottom: 15px;
-            text-align: justify; /* Justificado para look académico */
-        }
-
-        /* --- LISTA DE PUBLICACIONES --- */
-        .publication-list {
-            list-style: none;
-        }
-
-        .publication-item {
-            margin-bottom: 20px;
-            padding-left: 15px;
-            border-left: 2px solid #eee;
-            transition: border-color 0.3s ease;
-        }
-
-        .publication-item:hover {
-            border-left: 2px solid var(--accent-color);
-        }
-
-        .pub-title {
-            font-weight: bold;
+        /* Clase para mostrar la sección activa */
+        .content-section.active-section {
             display: block;
         }
 
-        .pub-meta {
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-            font-style: italic;
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-size: 1.1rem;
+        }
+
+        /* --- ESTILOS DE LISTAS (Publicaciones) --- */
+        h2 {
+            font-size: 1.4rem;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            margin-top: 0;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        .year {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
 
         /* --- FOOTER --- */
         footer {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #aaa;
             margin-top: 80px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #777;
             border-top: 1px solid #eee;
             padding-top: 20px;
         }
 
         /* --- ANIMACIÓN --- */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* --- RESPONSIVE --- */
+        
         @media (max-width: 600px) {
-            h1 { font-size: 2rem; }
-            nav a { display: block; margin: 10px 0; }
+             nav { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
@@ -167,73 +176,110 @@
 
     <div class="container">
         <header>
-            <h1>Tu Nombre Completo</h1>
-            <p class="subtitle">Doctorando en Física Teórica | Universidad de Ejemplo</p>
+            <h1>José Rojas-Quiroz</h1>
+            <div class="subtitle">Predoctoral Research Assistant<br>Polytechnic University of Catalonia—BarcelonaTech</div>
             
             <nav>
-                <a href="#about">Sobre mí</a>
-                <a href="#research">Investigación</a>
-                <a href="#publications">Publicaciones</a>
-                <a href="#contact">Contacto</a>
+                <button onclick="showSection('home')" id="btn-home" class="active-btn">About</button>
+                <button onclick="showSection('research')" id="btn-research">Research</button>
+                <button onclick="showSection('publications')" id="btn-publications">Publications</button>
+                <button onclick="showSection('contact')" id="btn-contact">Contact</button>
             </nav>
         </header>
 
         <main>
-            <section id="about">
-                <h2>Sobre mí</h2>
+            <div id="home" class="content-section active-section">
                 <p>
-                    Bienvenido a mi sitio personal. Soy investigador especializado en [Tu Área]. 
-                    Mi trabajo se centra en comprender los mecanismos fundamentales de [Tu Tema].
-                    Actualmente formo parte del grupo de investigación X en la Universidad Y.
+                    I am a researcher specializing in land and housing valuation and urban management. 
+                    Currently, I am working at Center for Land Policy and Valuations from the Polytechnic University of Catalonia, focusing on the intersection of urban planning and management and data science.
                 </p>
                 <p>
-                    Me interesa la intersección entre la teoría y la aplicación práctica, buscando soluciones 
-                    elegantes a problemas complejos.
+                    My work aims to explore the fundamental principles of [Subject], seeking elegant mathematical solutions 
+                    to complex physical problems. I am particularly interested in how theoretical frameworks can be applied 
+                    to understand real-world phenomena.
                 </p>
-            </section>
+            </div>
 
-            <section id="research">
-                <h2>Intereses de Investigación</h2>
+            <div id="research" class="content-section">
+                <h2>Research Interests</h2>
+                <p>My primary research focuses on the following areas:</p>
                 <ul>
-                    <li>Modelado matemático de sistemas complejos.</li>
-                    <li>Análisis de datos y Big Data en ciencias sociales.</li>
-                    <li>Ética en la inteligencia artificial.</li>
+                    <li>&bull; <strong>Complex Systems:</strong> Modeling dynamics in non-linear systems.</li>
+                    <li>&bull; <strong>Quantum Mechanics:</strong> Investigating entanglement entropy.</li>
+                    <li>&bull; <strong>Data Analysis:</strong> Statistical methods for large datasets.</li>
                 </ul>
-            </section>
+            </div>
 
-            <section id="publications">
-                <h2>Publicaciones Destacadas</h2>
-                <ul class="publication-list">
-                    <li class="publication-item">
-                        <span class="pub-title">Título del Artículo Científico Importante (2024)</span>
-                        <span class="pub-meta">Journal of Academic Excellence, Vol 4, pp. 100-120.</span>
-                        <br>
+            <div id="publications" class="content-section">
+                <h2>Selected Publications</h2>
+                <ul>
+                    <li>
+                        <span class="year">[2024]</span> 
+                        <strong>Title of the Very Important Paper.</strong> 
+                        <em>Journal of Physics A</em>. 
                         <a href="#">[PDF]</a> <a href="#">[DOI]</a>
                     </li>
-                    <li class="publication-item">
-                        <span class="pub-title">Otro Artículo Relevante sobre tu Tema (2023)</span>
-                        <span class="pub-meta">Proceedings of the International Conference.</span>
-                        <br>
+                    <li>
+                        <span class="year">[2023]</span> 
+                        <strong>Another Significant Contribution to Science.</strong> 
+                        <em>Physical Review Letters</em>. 
                         <a href="#">[PDF]</a>
                     </li>
+                    <li>
+                        <span class="year">[2022]</span> 
+                        <strong>Early Work on the Topic.</strong> 
+                        <em>Proceedings of the International Conference</em>.
+                    </li>
                 </ul>
-            </section>
+            </div>
 
-            <section id="contact">
-                <h2>Contacto</h2>
-                <p>Estoy abierto a colaboraciones académicas. Puedes contactarme en:</p>
+            <div id="contact" class="content-section">
+                <h2>Contact Information</h2>
                 <p>
-                    <strong>Email:</strong> correo@universidad.edu<br>
-                    <strong>Twitter/X:</strong> @tu_usuario<br>
-                    <strong>Google Scholar:</strong> <a href="#">Perfil</a>
+                    I am always open to academic collaboration and discussion.
                 </p>
-            </section>
+                <p>
+                    <strong>Email:</strong> jose.carlos.rojas@upc.edu<br>
+                    <strong>Office:</strong> Center for Land Policy and Valuations - Room 401, ETSAB<br>
+                    <strong>Address:</strong> Diagonal Avenue 649, Barcelona, Spain
+                </p>
+                <p>
+                    You can also find me on <a href="#">Google Scholar</a> or <a href="#">ResearchGate</a>.
+                </p>
+            </div>
         </main>
 
         <footer>
-            <p>&copy; 2025 Tu Nombre. Construido con diseño minimalista.</p>
+            &copy; 2025
         </footer>
     </div>
 
+    <script>
+        function showSection(sectionId) {
+            // 1. Ocultar todas las secciones
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active-section');
+                // Un pequeño truco para reiniciar la animación
+                section.style.animation = 'none';
+                section.offsetHeight; /* trigger reflow */
+                section.style.animation = null; 
+            });
+
+            // 2. Quitar la clase 'active' de todos los botones
+            const buttons = document.querySelectorAll('nav button');
+            buttons.forEach(btn => {
+                btn.classList.remove('active-btn');
+            });
+
+            // 3. Mostrar la sección seleccionada
+            const activeSection = document.getElementById(sectionId);
+            activeSection.classList.add('active-section');
+
+            // 4. Marcar el botón como activo
+            const activeButton = document.getElementById('btn-' + sectionId);
+            activeButton.classList.add('active-btn');
+        }
+    </script>
 </body>
 </html>
