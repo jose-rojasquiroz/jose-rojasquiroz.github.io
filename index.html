@@ -187,28 +187,16 @@
             padding-bottom: 20px;
         }
 
-        /* Iconos sociales en el header (derecha) */
-        .social-icons {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            display: flex;
-            gap: 14px;
-            color: var(--icon-color);
-        }
-
-        .social-icons a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 26px;
-            height: 26px;
-            color: var(--icon-color);
-            opacity: 0.85;
+        .about-social-icons a {
+            opacity: 0.75;
             transition: opacity 0.2s ease;
         }
 
-        .social-icons a:hover { opacity: 1; }
+        .about-social-icons a:hover { 
+            opacity: 1;
+        }
+
+        .brand-icon { width: 18px; height: 18px; display: block; }
 
         /* Botón para menú móvil (colapsable) */
         .menu-toggle {
@@ -242,11 +230,10 @@
         }
         
         @media (max-width: 600px) {
-            /* menú compacto: oculto por defecto, se muestra con nav-open */
-            .menu-toggle { display: inline-block; }
-            nav { display: none; flex-direction: column; gap: 10px; margin-top: 12px; }
-            body.nav-open nav { display: flex; }
-            nav button { font-size: 1rem; padding: 3px; }
+            /* menú siempre visible en línea horizontal */
+            .menu-toggle { display: none; }
+            nav { display: flex; flex-direction: row; gap: 8px; margin-top: 12px; justify-content: center; }
+            nav button { font-size: 0.9rem; padding: 2px 4px; }
         }
     </style>
 </head>
@@ -257,31 +244,6 @@
             <img src="foto_joserojasquiroz.jpg" alt="José Rojas-Quiroz" class="profile-photo">
             
             <h1>José Rojas-Quiroz</h1>
-            
-            <!-- Iconos sociales a la derecha -->
-            <div class="social-icons" aria-label="Social links">
-                <!-- LinkedIn (monograma IN en recuadro) -->
-                <a href="https://www.linkedin.com/in/jose-rojasquiroz/" target="_blank" rel="noopener" aria-label="LinkedIn">
-                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
-                        <rect x="2" y="2" width="20" height="20" rx="3" ry="3" stroke="currentColor"/>
-                        <text x="12" y="15" text-anchor="middle" font-size="11" fill="currentColor" font-family="serif">in</text>
-                    </svg>
-                </a>
-                <!-- GitHub (monograma GH en círculo) -->
-                <a href="https://github.com/jose-rojasquiroz/" target="_blank" rel="noopener" aria-label="GitHub">
-                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor"/>
-                        <text x="12" y="15" text-anchor="middle" font-size="10" fill="currentColor" font-family="serif">GH</text>
-                    </svg>
-                </a>
-                <!-- UPC (monograma UPC en círculo) -->
-                <a href="https://futur.upc.edu/JoseCarlosRojasQuiroz" target="_blank" rel="noopener" aria-label="UPC">
-                    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor"/>
-                        <text x="12" y="15" text-anchor="middle" font-size="9" fill="currentColor" font-family="serif">UPC</text>
-                    </svg>
-                </a>
-            </div>
             
             <!-- Toggle para menú móvil -->
             <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">Menu</button>
@@ -304,6 +266,17 @@
                 <p>
                     In case you are interested to contact me you can do it at jose.carlos.rojas[at]upc.edu.
                 </p>
+                <div class="about-social-icons" style="text-align: center; margin-top: 30px;">
+                    <a href="https://www.linkedin.com/in/jose-rojasquiroz/" target="_blank" rel="noopener" aria-label="LinkedIn" style="display: inline-block; margin: 0 10px;">
+                        <img class="brand-icon" alt="LinkedIn" src="svg/linkedin-mark.svg" />
+                    </a>
+                    <a href="https://github.com/jose-rojasquiroz/" target="_blank" rel="noopener" aria-label="GitHub" style="display: inline-block; margin: 0 10px;">
+                        <img class="brand-icon" alt="GitHub" src="svg/github-mark.svg" />
+                    </a>
+                    <a href="https://futur.upc.edu/JoseCarlosRojasQuiroz" target="_blank" rel="noopener" aria-label="UPC" style="display: inline-block; margin: 0 10px;">
+                        <img class="brand-icon" alt="UPC" src="svg/upc-mark.svg" />
+                    </a>
+                </div>
             </div>
 
             <div id="publications" class="content-section">
@@ -322,7 +295,7 @@
                     </li>
                 </ul>
                 <p>
-                    In any case you can also find me on 
+                    You can also find me on 
                     <a href="https://scholar.google.com/citations?user=nKZV_Y4AAAAJ&hl=es" target="_blank" rel="noopener">Google Scholar</a>.
                 </p>
             </div>
@@ -331,12 +304,10 @@
                 <ul>
                     <li>
                         <strong>ORCAL Peru</strong>
-                        <a href="https://jose-rojasquiroz.github.io/orcalperu/" target="_blank" rel="noopener">[Project]</a>
+                        <br>
+                        <a href="https://jose-rojasquiroz.github.io/orcalperu/" target="_blank" rel="noopener">[Project website]</a>
                         <a href="https://github.com/jose-rojasquiroz/orcalperu" target="_blank" rel="noopener" aria-label="GitHub repository" style="margin-left:6px; vertical-align: middle; display:inline-block;">
-                            <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" class="flag-svg">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor"/>
-                                <text x="12" y="15" text-anchor="middle" font-size="9" fill="currentColor" font-family="serif">GH</text>
-                            </svg>
+                            <img alt="GitHub" src="svg/github-mark.svg" style="width:18px;height:18px;display:inline-block;" />
                         </a>
                         <p style="margin-top:8px;">
                             An analysis of the orientation of the street network across 92 Peruvian cities, based on Geoff Boeing's work using the Python OSMnx library. Results can be compared across geographic regions and all data are shared for full reproducibility. No utilitarian goal, purely exploratory.
