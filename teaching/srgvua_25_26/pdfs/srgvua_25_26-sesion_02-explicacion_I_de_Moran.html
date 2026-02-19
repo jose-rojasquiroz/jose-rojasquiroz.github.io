@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autocorrelación Espacial – I de Moran</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  /* ── Latin Modern via Google Fonts (closest web equivalent) ── */
+  @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg:         #FBE6CD;
+    --card:       #f5dab8;
+    --border:     #f5dab8;
+    --accent:     #8B4513;
+    --accent2:    #2a7a6e;
+    --text:       #2c1a0e;
+    --muted:      #7a5c3a;
+    --low:        #3a6ea8;
+    --high:       #c0392b;
+    --mid:        #7a6a9a;
+    --formula-bg: #fdf0de;
+    --serif:      'EB Garamond', Georgia, serif;
+    --mono:       'DM Mono', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 400;
+    min-height: 100vh;
+    padding: 40px 24px;
+    line-height: 1.65;
+  }
+
+  /* ── HEADER ── */
+  .header { max-width: 900px; margin: 0 auto 48px; text-align: center; }
+  .header h1 {
+    font-family: var(--serif);
+    font-size: clamp(30px, 4vw, 48px);
+    font-weight: 600;
+    color: var(--accent);
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .header p {
+    color: var(--muted);
+    font-size: 16px;
+    font-style: italic;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ── STEP NAV ── */
+  .steps-nav { display: flex; justify-content: center; gap: 8px; margin-bottom: 40px; flex-wrap: wrap; }
+  .step-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: 7px 18px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: 14px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-btn .num {
+    background: rgba(139,69,19,0.12);
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .step-btn.active { border-color: var(--accent); color: var(--accent); }
+  .step-btn.active .num { background: var(--accent); color: #fff; }
+  .step-btn:hover:not(.active) { border-color: var(--accent); color: var(--text); }
+
+  /* ── PANELS ── */
+  .step-panel { display: none; max-width: 900px; margin: 0 auto; animation: fadeIn 0.35s ease; }
+  .step-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+  .panel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 680px) { .panel-grid { grid-template-columns: 1fr; } }
+
+  .panel-card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .panel-card.full { grid-column: 1 / -1; }
+
+  .card-label {
+    font-size: 10px;
+    font-family: var(--mono);
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .card-title {
+    font-family: var(--serif);
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+  .card-text {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+  .hl-accent { color: var(--accent); }
+  .hl-blue   { color: var(--low); }
+  .hl-red    { color: var(--high); }
+  .hl-teal   { color: var(--accent2); }
+
+  /* ── TABLE ── */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; font-family: var(--mono); }
+  th {
+    color: var(--muted);
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(139,69,19,0.2);
+    font-weight: 400;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  td { padding: 8px 10px; border-bottom: 1px solid rgba(139,69,19,0.12); color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  td.num-cell { text-align: right; }
+  .pos  { color: var(--high); }
+  .neg  { color: var(--low); }
+  .zero { color: var(--muted); }
+
+  /* ── MATRIX ── */
+  .matrix-wrap { overflow-x: auto; }
+  .matrix-grid { display: inline-grid; gap: 3px; padding: 4px; }
+  .m-cell {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    font-family: var(--mono);
+    background: rgba(139,69,19,0.08);
+    color: var(--muted);
+  }
+  .m-cell.one  { background: rgba(139,69,19,0.18); color: var(--accent); }
+  .m-cell.diag { background: rgba(139,69,19,0.04); color: rgba(139,69,19,0.22); }
+  .m-cell.header-cell { background: transparent; color: var(--muted); font-size: 11px; letter-spacing: 0.05em; }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: var(--formula-bg);
+    border: 1.5px solid rgba(139,69,19,0.2);
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin: 14px 0;
+    font-family: var(--mono);
+    font-size: 15px;
+    color: var(--accent2);
+    text-align: center;
+    line-height: 1.9;
+  }
+  .formula-box .frow { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+  .formula-box .frac { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; }
+  .formula-box .frac .fnum, .formula-box .frac .fden { padding: 0 6px; }
+  .formula-box .frac .fline { width: 100%; height: 1.5px; background: var(--accent2); opacity: 0.5; }
+  .formula-box .comment { font-size: 12px; color: var(--muted); font-family: var(--serif); font-style: italic; margin-top: 4px; display: block; }
+
+  /* ── RESULT BOX ── */
+  .result-box {
+    background: var(--formula-bg);
+    border: 1.5px solid var(--accent);
+    border-radius: 14px;
+    padding: 22px;
+    text-align: center;
+    margin-top: 16px;
+  }
+  .result-box .r-label { font-size: 11px; font-family: var(--mono); letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .result-box .r-value { font-family: var(--serif); font-size: 54px; font-weight: 600; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+  .result-box .r-desc  { font-family: var(--serif); font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── MORAN SCALE ── */
+  .moran-scale { margin: 18px 0 8px; }
+  .scale-bar { height: 12px; border-radius: 6px; background: linear-gradient(to right, var(--low), #9a8aaa, var(--high)); position: relative; margin-bottom: 6px; }
+  .scale-labels { display: flex; justify-content: space-between; font-size: 11px; font-family: var(--mono); color: var(--muted); }
+  .scale-marker { position: absolute; top: -5px; width: 4px; height: 22px; background: var(--accent); border-radius: 2px; transform: translateX(-50%); }
+
+  /* ── QUAD LEGEND ── */
+  .quad-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .quad-item {
+    background: var(--formula-bg);
+    border: 1px solid rgba(139,69,19,0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .quad-item .q-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; vertical-align: middle; }
+
+  /* ── NAV ── */
+  .step-nav { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 32px auto 0; padding: 0 4px; }
+  .nav-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    padding: 9px 24px;
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: var(--serif);
+    font-size: 15px;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .nav-btn:disabled:hover { border-color: var(--border); color: var(--text); }
+  .step-indicator { font-size: 12px; font-family: var(--mono); color: var(--muted); }
+
+  svg.city-grid { width: 100%; height: auto; display: block; }
+  svg.scatter   { width: 100%; height: auto; display: block; }
+
+  /* ── INLINE NOTE BOX ── */
+  .note-box {
+    background: var(--formula-bg);
+    border-radius: 10px;
+    border: 1px solid rgba(139,69,19,0.15);
+    padding: 14px 16px;
+    margin-top: 12px;
+    font-family: var(--serif);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Autocorrelación Espacial<br>y la I de Moran</h1>
+  <p>¿Cómo se mide la agrupación espacial?</p>
+</div>
+
+<div class="steps-nav">
+  <button class="step-btn active" data-step="1" onclick="goTo(1)"><span class="num">1</span> Las viviendas</button>
+  <button class="step-btn" data-step="2" onclick="goTo(2)"><span class="num">2</span> Estandarizar</button>
+  <button class="step-btn" data-step="3" onclick="goTo(3)"><span class="num">3</span> Matriz W</button>
+  <button class="step-btn" data-step="4" onclick="goTo(4)"><span class="num">4</span> Rezago espacial</button>
+  <button class="step-btn" data-step="5" onclick="goTo(5)"><span class="num">5</span> I de Moran</button>
+  <button class="step-btn" data-step="6" onclick="goTo(6)"><span class="num">6</span> LISA local</button>
+</div>
+
+<!-- ══════ STEP 1 ══════ -->
+<div class="step-panel active" id="step1">
+  <div class="panel-grid">
+    <div class="panel-card">
+      <div class="card-label">Paso 1 de 6</div>
+      <div class="card-title">Nuestras viviendas y sus precios</div>
+      <div class="card-text">
+        Imaginamos un barrio con 9 viviendas distribuidas en una cuadrícula 3×3.
+        Cada vivienda tiene un precio (€/m²).<br><br>
+        A simple vista parece que <span class="hl-red">los precios altos se concentran arriba a la derecha</span>
+        y <span class="hl-blue">los bajos abajo a la izquierda</span>.
+        Pero, ¿cómo lo medimos objetivamente?<br><br>
+        La I de Moran nos dará un número entre −1 y +1 que cuantifica exactamente esa agrupación.
+      </div>
+    </div>
+    <div class="panel-card">
+      <!-- viewBox ampliado a 290 de alto para que las letras de la fila inferior quepan -->
+      <svg class="city-grid" viewBox="0 0 280 292" fill="none">
+        <!-- Row bottom (y=190..270) -->
+        <rect x="10"  y="190" width="80" height="80" rx="8" fill="rgba(58,110,168,0.75)"/>
+        <rect x="100" y="190" width="80" height="80" rx="8" fill="rgba(58,110,168,0.52)"/>
+        <rect x="190" y="190" width="80" height="80" rx="8" fill="rgba(122,106,154,0.45)"/>
+        <!-- Row middle (y=100..180) -->
+        <rect x="10"  y="100" width="80" height="80" rx="8" fill="rgba(58,110,168,0.38)"/>
+        <rect x="100" y="100" width="80" height="80" rx="8" fill="rgba(122,106,154,0.4)"/>
+        <rect x="190" y="100" width="80" height="80" rx="8" fill="rgba(192,57,43,0.42)"/>
+        <!-- Row top (y=10..90) -->
+        <rect x="10"  y="10"  width="80" height="80" rx="8" fill="rgba(122,106,154,0.4)"/>
+        <rect x="100" y="10"  width="80" height="80" rx="8" fill="rgba(192,57,43,0.5)"/>
+        <rect x="190" y="10"  width="80" height="80" rx="8" fill="rgba(192,57,43,0.78)"/>
+
+        <!-- Prices: centered in each cell -->
+        <text x="50"  y="234" text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">2.100</text>
+        <text x="140" y="234" text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">2.600</text>
+        <text x="230" y="234" text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">3.000</text>
+        <text x="50"  y="144" text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">3.200</text>
+        <text x="140" y="144" text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">4.100</text>
+        <text x="230" y="144" text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">4.900</text>
+        <text x="50"  y="54"  text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">4.800</text>
+        <text x="140" y="54"  text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">5.200</text>
+        <text x="230" y="54"  text-anchor="middle" font-family="DM Mono" font-size="13" fill="#fff">5.800</text>
+
+        <!-- €/m² sublabels -->
+        <text x="50"  y="250" text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+        <text x="140" y="250" text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+        <text x="230" y="250" text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+        <text x="50"  y="160" text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+        <text x="140" y="160" text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+        <text x="230" y="160" text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+        <text x="50"  y="70"  text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+        <text x="140" y="70"  text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+        <text x="230" y="70"  text-anchor="middle" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,0.6)">€/m²</text>
+
+        <!-- Letter IDs: inside each cell, bottom-left corner -->
+        <!-- Bottom row: cells start at y=190 → bottom-left letter at y=190+14=204 -->
+        <text x="17"  y="204" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">A</text>
+        <text x="107" y="204" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">B</text>
+        <text x="197" y="204" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">C</text>
+        <!-- Middle row: cells start at y=100 → y=114 -->
+        <text x="17"  y="114" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">D</text>
+        <text x="107" y="114" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">E</text>
+        <text x="197" y="114" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">F</text>
+        <!-- Top row: cells start at y=10 → y=24 -->
+        <text x="17"  y="24"  font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">G</text>
+        <text x="107" y="24"  font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">H</text>
+        <text x="197" y="24"  font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.45)">I</text>
+      </svg>
+      <div style="display:flex;gap:16px;margin-top:14px;justify-content:center;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);font-family:var(--serif);">
+          <span style="width:12px;height:12px;border-radius:3px;background:rgba(58,110,168,0.75);display:inline-block"></span>Precio bajo
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);font-family:var(--serif);">
+          <span style="width:12px;height:12px;border-radius:3px;background:rgba(122,106,154,0.55);display:inline-block"></span>Precio medio
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);font-family:var(--serif);">
+          <span style="width:12px;height:12px;border-radius:3px;background:rgba(192,57,43,0.78);display:inline-block"></span>Precio alto
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ STEP 2 ══════ -->
+<div class="step-panel" id="step2">
+  <div class="panel-grid">
+    <div class="panel-card">
+      <div class="card-label">Paso 2 de 6</div>
+      <div class="card-title">Estandarizar los precios (z-scores)</div>
+      <div class="card-text">
+        Para que el cálculo no dependa de las unidades (€/m²), centramos los precios:
+        restamos la media y dividimos por la desviación típica.<br><br>
+        Media: 3.967 €/m² &nbsp;·&nbsp; σ: 1.212 €/m²<br><br>
+        El resultado es el <span class="hl-accent">z-score</span> de cada vivienda:
+        cuántas desviaciones típicas está por encima (+) o por debajo (−) de la media.
+        <div class="formula-box" style="margin-top:14px;">
+          <div class="frow">
+            <span style="color:var(--accent)">z&#x1D456;</span>
+            <span style="color:var(--muted)">=</span>
+            <span class="frac">
+              <span class="fnum" style="color:var(--text)">x&#x1D456; − x̄</span>
+              <span class="fline"></span>
+              <span class="fden" style="color:var(--text)">σ</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-card">
+      <div class="card-label">Z-scores de las 9 viviendas</div>
+      <table>
+        <tr><th>Vivienda</th><th>Precio €/m²</th><th>z-score</th></tr>
+        <tr><td>A</td><td class="num-cell">2.100</td><td class="num-cell neg">−1.54</td></tr>
+        <tr><td>B</td><td class="num-cell">2.600</td><td class="num-cell neg">−1.13</td></tr>
+        <tr><td>C</td><td class="num-cell">3.000</td><td class="num-cell neg">−0.80</td></tr>
+        <tr><td>D</td><td class="num-cell">3.200</td><td class="num-cell neg">−0.63</td></tr>
+        <tr><td>E</td><td class="num-cell">4.100</td><td class="num-cell zero">+0.11</td></tr>
+        <tr><td>F</td><td class="num-cell">4.900</td><td class="num-cell pos">+0.77</td></tr>
+        <tr><td>G</td><td class="num-cell">4.800</td><td class="num-cell pos">+0.69</td></tr>
+        <tr><td>H</td><td class="num-cell">5.200</td><td class="num-cell pos">+1.02</td></tr>
+        <tr><td>I</td><td class="num-cell">5.800</td><td class="num-cell pos">+1.51</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ STEP 3 ══════ -->
+<div class="step-panel" id="step3">
+  <div class="panel-grid">
+    <div class="panel-card">
+      <div class="card-label">Paso 3 de 6</div>
+      <div class="card-title">La matriz de pesos espaciales W</div>
+      <div class="card-text">
+        Necesitamos definir quién es <span class="hl-accent">"vecino"</span> de quién.
+        El criterio más habitual es contigüidad reina: dos viviendas son vecinas
+        si comparten lado o esquina (como los movimientos de la reina en ajedrez).<br><br>
+        Construimos una matriz N×N donde:<br>
+        · <span class="hl-accent">w<sub>ij</sub> = 1</span> si i y j son vecinos<br>
+        · w<sub>ij</sub> = 0 si no lo son (ni la diagonal)<br><br>
+        Luego se estandariza por filas: cada 1 se divide por el número de vecinos
+        de esa vivienda, para que cada fila sume 1.
+      </div>
+    </div>
+    <div class="panel-card">
+      <div class="card-label">Matriz W (binaria, contigüidad reina)</div>
+      <div class="matrix-wrap">
+        <div class="matrix-grid" style="grid-template-columns: repeat(10, 36px);">
+          <div class="m-cell header-cell"></div>
+          <div class="m-cell header-cell">A</div><div class="m-cell header-cell">B</div><div class="m-cell header-cell">C</div>
+          <div class="m-cell header-cell">D</div><div class="m-cell header-cell">E</div><div class="m-cell header-cell">F</div>
+          <div class="m-cell header-cell">G</div><div class="m-cell header-cell">H</div><div class="m-cell header-cell">I</div>
+          <div class="m-cell header-cell">A</div>
+          <div class="m-cell diag">—</div><div class="m-cell one">1</div><div class="m-cell">0</div>
+          <div class="m-cell one">1</div><div class="m-cell one">1</div><div class="m-cell">0</div>
+          <div class="m-cell">0</div><div class="m-cell">0</div><div class="m-cell">0</div>
+          <div class="m-cell header-cell">B</div>
+          <div class="m-cell one">1</div><div class="m-cell diag">—</div><div class="m-cell one">1</div>
+          <div class="m-cell one">1</div><div class="m-cell one">1</div><div class="m-cell one">1</div>
+          <div class="m-cell">0</div><div class="m-cell">0</div><div class="m-cell">0</div>
+          <div class="m-cell header-cell">C</div>
+          <div class="m-cell">0</div><div class="m-cell one">1</div><div class="m-cell diag">—</div>
+          <div class="m-cell">0</div><div class="m-cell one">1</div><div class="m-cell one">1</div>
+          <div class="m-cell">0</div><div class="m-cell">0</div><div class="m-cell">0</div>
+          <div class="m-cell header-cell">D</div>
+          <div class="m-cell one">1</div><div class="m-cell one">1</div><div class="m-cell">0</div>
+          <div class="m-cell diag">—</div><div class="m-cell one">1</div><div class="m-cell">0</div>
+          <div class="m-cell one">1</div><div class="m-cell one">1</div><div class="m-cell">0</div>
+          <div class="m-cell header-cell">E</div>
+          <div class="m-cell one">1</div><div class="m-cell one">1</div><div class="m-cell one">1</div>
+          <div class="m-cell one">1</div><div class="m-cell diag">—</div><div class="m-cell one">1</div>
+          <div class="m-cell one">1</div><div class="m-cell one">1</div><div class="m-cell one">1</div>
+          <div class="m-cell header-cell">F</div>
+          <div class="m-cell">0</div><div class="m-cell one">1</div><div class="m-cell one">1</div>
+          <div class="m-cell">0</div><div class="m-cell one">1</div><div class="m-cell diag">—</div>
+          <div class="m-cell">0</div><div class="m-cell one">1</div><div class="m-cell one">1</div>
+          <div class="m-cell header-cell">G</div>
+          <div class="m-cell">0</div><div class="m-cell">0</div><div class="m-cell">0</div>
+          <div class="m-cell one">1</div><div class="m-cell one">1</div><div class="m-cell">0</div>
+          <div class="m-cell diag">—</div><div class="m-cell one">1</div><div class="m-cell">0</div>
+          <div class="m-cell header-cell">H</div>
+          <div class="m-cell">0</div><div class="m-cell">0</div><div class="m-cell">0</div>
+          <div class="m-cell one">1</div><div class="m-cell one">1</div><div class="m-cell one">1</div>
+          <div class="m-cell one">1</div><div class="m-cell diag">—</div><div class="m-cell one">1</div>
+          <div class="m-cell header-cell">I</div>
+          <div class="m-cell">0</div><div class="m-cell">0</div><div class="m-cell">0</div>
+          <div class="m-cell">0</div><div class="m-cell one">1</div><div class="m-cell one">1</div>
+          <div class="m-cell">0</div><div class="m-cell one">1</div><div class="m-cell diag">—</div>
+        </div>
+      </div>
+      <div style="font-size:13px;color:var(--muted);margin-top:10px;font-family:var(--serif);font-style:italic;">
+        Después se normaliza por filas → cada 1 se convierte en 1/nº_vecinos
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ STEP 4 ══════ -->
+<div class="step-panel" id="step4">
+  <div class="panel-grid">
+    <div class="panel-card">
+      <div class="card-label">Paso 4 de 6</div>
+      <div class="card-title">El rezago espacial: Wz</div>
+      <div class="card-text">
+        Multiplicamos la matriz W (normalizada) por el vector de z-scores.
+        El resultado es el <span class="hl-teal">rezago espacial</span> de cada vivienda:<br><br>
+        Wz<sub>i</sub> = promedio ponderado de los z-scores de los vecinos de i<br><br>
+        Para cada vivienda, calculamos el precio medio estandarizado de sus vecinos.
+        Si el propio z y el de sus vecinos tienen el mismo signo,
+        hay agrupación y la I de Moran será alta.
+      </div>
+      <div class="formula-box">
+        <div class="frow">
+          <span style="color:var(--accent2)">Wz<sub>i</sub></span>
+          <span style="color:var(--muted)">=</span>
+          <span style="color:var(--text)">Σ<sub>j</sub> w<sub>ij</sub> · z<sub>j</sub></span>
+        </div>
+        <span class="comment">suma ponderada de los z-scores de los vecinos</span>
+      </div>
+    </div>
+    <div class="panel-card">
+      <div class="card-label">z-score propio vs. rezago espacial</div>
+      <table>
+        <tr><th>Vivienda</th><th>z propio</th><th>Wz (media vecinos)</th><th>Mismo signo</th></tr>
+        <tr><td>A</td><td class="num-cell neg">−1.54</td><td class="num-cell neg">−0.85</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+        <tr><td>B</td><td class="num-cell neg">−1.13</td><td class="num-cell neg">−0.66</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+        <tr><td>C</td><td class="num-cell neg">−0.80</td><td class="num-cell neg">−0.21</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+        <tr><td>D</td><td class="num-cell neg">−0.63</td><td class="num-cell neg">−0.40</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+        <tr><td>E</td><td class="num-cell zero">+0.11</td><td class="num-cell zero">+0.09</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+        <tr><td>F</td><td class="num-cell pos">+0.77</td><td class="num-cell pos">+0.60</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+        <tr><td>G</td><td class="num-cell pos">+0.69</td><td class="num-cell pos">+0.38</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+        <tr><td>H</td><td class="num-cell pos">+1.02</td><td class="num-cell pos">+0.72</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+        <tr><td>I</td><td class="num-cell pos">+1.51</td><td class="num-cell pos">+0.98</td><td style="text-align:center;color:var(--accent2)">✓</td></tr>
+      </table>
+      <div style="font-size:13px;color:var(--muted);margin-top:10px;font-family:var(--serif);font-style:italic;">
+        Todos los signos coinciden → fuerte autocorrelación positiva
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ STEP 5 ══════ -->
+<div class="step-panel" id="step5">
+  <div class="panel-grid">
+    <div class="panel-card">
+      <div class="card-label">Paso 5 de 6</div>
+      <div class="card-title">El diagrama de dispersión de Moran</div>
+      <div class="card-text">
+        Representamos cada vivienda como un punto donde:<br>
+        · Eje X = z-score propio (precio estandarizado)<br>
+        · Eje Y = Wz (promedio estandarizado de sus vecinos)<br><br>
+        La <span class="hl-accent">pendiente de la línea de regresión</span> de este gráfico
+        es la I de Moran global.<br><br>
+        Una pendiente positiva y pronunciada significa que los vecinos de una vivienda cara
+        también son caros: autocorrelación espacial positiva.
+      </div>
+      <div class="formula-box">
+        <div class="frow">
+          <span style="color:var(--accent)">I</span>
+          <span style="color:var(--muted)">=</span>
+          <span class="frac">
+            <span class="fnum" style="color:var(--text)">N</span>
+            <span class="fline"></span>
+            <span class="fden" style="color:var(--text)">S₀</span>
+          </span>
+          <span style="color:var(--muted)">·</span>
+          <span class="frac">
+            <span class="fnum" style="color:var(--text)">Σᵢ Σⱼ wᵢⱼ zᵢ zⱼ</span>
+            <span class="fline"></span>
+            <span class="fden" style="color:var(--text)">Σᵢ zᵢ²</span>
+          </span>
+        </div>
+        <span class="comment">S₀ = suma total de todos los pesos wᵢⱼ</span>
+      </div>
+      <div class="moran-scale">
+        <div class="card-label" style="margin-bottom:8px">Escala de interpretación</div>
+        <div class="scale-bar"><div class="scale-marker" style="left:81%"></div></div>
+        <div class="scale-labels">
+          <span>−1 dispersión</span>
+          <span>0 aleatoriedad</span>
+          <span>+1 agrupación</span>
+        </div>
+      </div>
+    </div>
+    <div class="panel-card">
+      <div class="card-label">Diagrama de dispersión de Moran</div>
+      <svg class="scatter" viewBox="0 0 260 260" fill="none">
+        <line x1="30" y1="130" x2="250" y2="130" stroke="rgba(44,26,14,0.18)" stroke-width="1"/>
+        <line x1="140" y1="10"  x2="140" y2="250" stroke="rgba(44,26,14,0.18)" stroke-width="1"/>
+        <text x="140" y="258" text-anchor="middle" font-family="DM Mono" font-size="8" fill="var(--muted)">z-score propio (xᵢ)</text>
+        <text x="12" y="130" text-anchor="middle" font-family="DM Mono" font-size="8" fill="var(--muted)" transform="rotate(-90,12,130)">Wz (vecinos)</text>
+        <text x="50"  y="143" text-anchor="middle" font-family="DM Mono" font-size="9" fill="var(--muted)">−1</text>
+        <text x="140" y="143" text-anchor="middle" font-family="DM Mono" font-size="9" fill="var(--muted)">0</text>
+        <text x="220" y="143" text-anchor="middle" font-family="DM Mono" font-size="9" fill="var(--muted)">+1</text>
+        <text x="132" y="50"  text-anchor="end" font-family="DM Mono" font-size="9" fill="var(--muted)">+1</text>
+        <text x="132" y="200" text-anchor="end" font-family="DM Mono" font-size="9" fill="var(--muted)">−1</text>
+        <!-- Quadrant labels — small -->
+        <text x="36"  y="22"  font-family="DM Mono" font-size="5" fill="rgba(192,57,43,0.6)">HH · caro rodeado de caros</text>
+        <text x="143" y="248" font-family="DM Mono" font-size="5" fill="rgba(58,110,168,0.6)">LL · barato rodeado de baratos</text>
+        <!-- Regression line -->
+        <line x1="63" y1="177" x2="215" y2="83" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.55"/>
+        <!-- Points -->
+        <circle cx="63"  cy="172" r="6" fill="var(--low)"  opacity="0.85"/>
+        <circle cx="84"  cy="163" r="6" fill="var(--low)"  opacity="0.8"/>
+        <circle cx="100" cy="141" r="6" fill="var(--low)"  opacity="0.65"/>
+        <circle cx="108" cy="150" r="6" fill="var(--low)"  opacity="0.7"/>
+        <circle cx="145" cy="125" r="6" fill="var(--mid)"  opacity="0.8"/>
+        <circle cx="178" cy="100" r="6" fill="var(--high)" opacity="0.75"/>
+        <circle cx="174" cy="111" r="6" fill="var(--high)" opacity="0.7"/>
+        <circle cx="191" cy="94"  r="6" fill="var(--high)" opacity="0.8"/>
+        <circle cx="215" cy="81"  r="6" fill="var(--high)" opacity="0.9"/>
+        <text x="60"  y="169" font-family="DM Mono" font-size="8" fill="white">A</text>
+        <text x="81"  y="160" font-family="DM Mono" font-size="8" fill="white">B</text>
+        <text x="97"  y="138" font-family="DM Mono" font-size="8" fill="white">C</text>
+        <text x="105" y="147" font-family="DM Mono" font-size="8" fill="white">D</text>
+        <text x="142" y="122" font-family="DM Mono" font-size="8" fill="white">E</text>
+        <text x="175" y="97"  font-family="DM Mono" font-size="8" fill="white">F</text>
+        <text x="171" y="108" font-family="DM Mono" font-size="8" fill="white">G</text>
+        <text x="188" y="91"  font-family="DM Mono" font-size="8" fill="white">H</text>
+        <text x="212" y="78"  font-family="DM Mono" font-size="8" fill="white">I</text>
+        <text x="158" y="70" font-family="DM Mono" font-size="10" fill="var(--accent)">I = 0.62</text>
+      </svg>
+      <div class="result-box">
+        <div class="r-label">I de Moran Global</div>
+        <div class="r-value">+0.62</div>
+        <div class="r-desc">Autocorrelación espacial positiva fuerte.<br>Los precios se agrupan en el espacio — no es aleatorio.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ STEP 6 ══════ -->
+<div class="step-panel" id="step6">
+  <div class="panel-grid">
+
+    <div class="panel-card">
+      <div class="card-label">Paso 6 de 6 — Bonus</div>
+      <div class="card-title">LISA: la I de Moran local</div>
+      <div class="card-text">
+        La I global nos da un número para todo el barrio.
+        Pero, ¿qué pasa si hay zonas con comportamientos distintos?<br><br>
+        La <span class="hl-accent">I de Moran Local (LISA)</span> calcula un valor
+        para cada vivienda, identificando qué tipo de agrupación tiene:
+        <div class="quad-legend">
+          <div class="quad-item">
+            <span class="q-dot" style="background:var(--high)"></span>
+            <span style="color:var(--high)">HH</span> — caro rodeado de caros<br>
+            <span style="font-size:12px;font-style:italic;">Cluster de precios altos</span>
+          </div>
+          <div class="quad-item">
+            <span class="q-dot" style="background:var(--low)"></span>
+            <span style="color:var(--low)">LL</span> — barato rodeado de baratos<br>
+            <span style="font-size:12px;font-style:italic;">Cluster de precios bajos</span>
+          </div>
+          <div class="quad-item">
+            <span class="q-dot" style="background:#c9841c"></span>
+            <span style="color:#c9841c">HL</span> — caro rodeado de baratos<br>
+            <span style="font-size:12px;font-style:italic;">Outlier espacial alto</span>
+          </div>
+          <div class="quad-item">
+            <span class="q-dot" style="background:#5a9ab0"></span>
+            <span style="color:#5a9ab0">LH</span> — barato rodeado de caros<br>
+            <span style="font-size:12px;font-style:italic;">Outlier espacial bajo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="card-label">Mapa LISA del ejemplo</div>
+      <svg class="city-grid" viewBox="0 0 280 310" fill="none" style="max-height:320px;">
+        <rect x="10"  y="180" width="80" height="80" rx="8" fill="rgba(58,110,168,0.78)"/>
+        <rect x="100" y="180" width="80" height="80" rx="8" fill="rgba(58,110,168,0.62)"/>
+        <rect x="190" y="180" width="80" height="80" rx="8" fill="rgba(58,110,168,0.45)"/>
+        <rect x="10"  y="90"  width="80" height="80" rx="8" fill="rgba(58,110,168,0.5)"/>
+        <rect x="100" y="90"  width="80" height="80" rx="8" fill="rgba(122,106,154,0.22)"/>
+        <rect x="190" y="90"  width="80" height="80" rx="8" fill="rgba(192,57,43,0.5)"/>
+        <rect x="10"  y="0"   width="80" height="80" rx="8" fill="rgba(192,57,43,0.55)"/>
+        <rect x="100" y="0"   width="80" height="80" rx="8" fill="rgba(192,57,43,0.7)"/>
+        <rect x="190" y="0"   width="80" height="80" rx="8" fill="rgba(192,57,43,0.88)"/>
+        <!-- LISA labels -->
+        <text x="50"  y="218" text-anchor="middle" font-family="DM Mono" font-size="14" fill="#fff">LL</text>
+        <text x="140" y="218" text-anchor="middle" font-family="DM Mono" font-size="14" fill="#fff">LL</text>
+        <text x="230" y="218" text-anchor="middle" font-family="DM Mono" font-size="14" fill="#fff">LL</text>
+        <text x="50"  y="128" text-anchor="middle" font-family="DM Mono" font-size="14" fill="#fff">LL</text>
+        <text x="140" y="128" text-anchor="middle" font-family="DM Mono" font-size="11" fill="rgba(255,255,255,0.5)">n.s.</text>
+        <text x="230" y="128" text-anchor="middle" font-family="DM Mono" font-size="14" fill="#fff">HH</text>
+        <text x="50"  y="38"  text-anchor="middle" font-family="DM Mono" font-size="14" fill="#fff">HH</text>
+        <text x="140" y="38"  text-anchor="middle" font-family="DM Mono" font-size="14" fill="#fff">HH</text>
+        <text x="230" y="38"  text-anchor="middle" font-family="DM Mono" font-size="14" fill="#fff">HH</text>
+        <!-- Price sublabels -->
+        <text x="50"  y="236" text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">2.100 €/m²</text>
+        <text x="140" y="236" text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">2.600 €/m²</text>
+        <text x="230" y="236" text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">3.000 €/m²</text>
+        <text x="50"  y="146" text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">3.200 €/m²</text>
+        <text x="140" y="146" text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">4.100 €/m²</text>
+        <text x="230" y="146" text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">4.900 €/m²</text>
+        <text x="50"  y="56"  text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">4.800 €/m²</text>
+        <text x="140" y="56"  text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">5.200 €/m²</text>
+        <text x="230" y="56"  text-anchor="middle" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.55)">5.800 €/m²</text>
+        <!-- Letter IDs -->
+        <text x="17"  y="194" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">A</text>
+        <text x="107" y="194" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">B</text>
+        <text x="197" y="194" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">C</text>
+        <text x="17"  y="104" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">D</text>
+        <text x="107" y="104" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">E</text>
+        <text x="197" y="104" font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">F</text>
+        <text x="17"  y="14"  font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">G</text>
+        <text x="107" y="14"  font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">H</text>
+        <text x="197" y="14"  font-family="DM Mono" font-size="10" fill="rgba(255,255,255,0.4)">I</text>
+        <!-- Legend: two lines, not side-by-side -->
+        <rect x="10"  y="268" width="14" height="14" rx="3" fill="rgba(192,57,43,0.88)"/>
+        <text x="28"  y="279" font-family="DM Mono" font-size="11" fill="var(--muted)">HH – cluster de precios altos</text>
+        <rect x="10"  y="288" width="14" height="14" rx="3" fill="rgba(58,110,168,0.78)"/>
+        <text x="28"  y="299" font-family="DM Mono" font-size="11" fill="var(--muted)">LL – cluster de precios bajos</text>
+      </svg>
+      <div class="note-box">
+        Lectura práctica: la vivienda central (E) tiene un valor no significativo (n.s.)
+        porque está rodeada tanto de baratas como de caras — es la transición entre los dos clusters.
+      </div>
+    </div>
+
+    <!-- Significance -->
+    <div class="panel-card full">
+      <div class="card-label">¿Cómo se determina si un LISA es significativo?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start;">
+        <div class="card-text">
+          No se usa una distribución estadística clásica, porque los datos espaciales
+          no son independientes entre sí. En su lugar se aplica un test de
+          <span class="hl-accent">permutaciones de Monte Carlo</span>, cuya pregunta central
+          es siempre la misma: <em>¿con qué frecuencia el azar replicaría lo que observamos?</em>
+          El procedimiento es el siguiente:<br><br>
+
+          1. Se calcula el LISA observado de la vivienda i, con sus vecinos reales.<br><br>
+          2. Se repite 999 veces: la vivienda i mantiene su precio y posición geográfica,
+          pero los precios del resto de viviendas se redistribuyen aleatoriamente entre sus
+          posiciones. Cada repetición produce un nuevo valor LISA para i. El resultado es
+          una <em>distribución de referencia</em> de 999 valores que representa lo que el
+          azar podría generar para esa localización concreta.<br><br>
+          3. Se localiza el LISA observado dentro de esa distribución de referencia.<br><br>
+          4. Se cuenta cuántas de las 999 permutaciones producen un LISA igual de extremo
+          o más que el observado. Ese recuento dividido entre 999 es el p-valor. La
+          interpretación es idéntica independientemente de si el valor observado es alto o bajo:<br><br>
+          · Si solo 23 permutaciones lo replican → p = 23/999 ≈ 0.023
+          → <span class="hl-teal">significativo</span>: el azar raramente produce lo que observamos.<br>
+          · Si 400 permutaciones lo replican fácilmente → p ≈ 0.40
+          → <span class="hl-red">no significativo</span>: el azar lo reproduce con frecuencia, no podemos descartar que sea aleatorio.<br><br>
+          La vivienda E resulta n.s. precisamente porque su LISA es cercano a cero — su entorno
+          es heterogéneo — y la distribución de referencia genera ese resultado con mucha
+          frecuencia. No hace falta que un valor sea "grande" para ser significativo; basta con
+          que sea inusual respecto a lo que el azar produciría en esa misma localización.
+        </div>
+
+        <div>
+          <div style="font-size:11px;font-family:var(--mono);color:var(--muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.1em;">Distribución de referencia (999 permutaciones)</div>
+          <svg viewBox="0 0 220 120" fill="none" style="width:100%;height:auto;">
+            <rect x="10"  y="100" width="12" height="2"  rx="2" fill="rgba(122,106,154,0.4)"/>
+            <rect x="24"  y="97"  width="12" height="5"  rx="2" fill="rgba(122,106,154,0.42)"/>
+            <rect x="38"  y="90"  width="12" height="12" rx="2" fill="rgba(122,106,154,0.46)"/>
+            <rect x="52"  y="78"  width="12" height="24" rx="2" fill="rgba(122,106,154,0.5)"/>
+            <rect x="66"  y="60"  width="12" height="42" rx="2" fill="rgba(122,106,154,0.55)"/>
+            <rect x="80"  y="40"  width="12" height="62" rx="2" fill="rgba(122,106,154,0.6)"/>
+            <rect x="94"  y="28"  width="12" height="74" rx="2" fill="rgba(122,106,154,0.65)"/>
+            <rect x="108" y="30"  width="12" height="72" rx="2" fill="rgba(122,106,154,0.65)"/>
+            <rect x="122" y="45"  width="12" height="57" rx="2" fill="rgba(122,106,154,0.6)"/>
+            <rect x="136" y="62"  width="12" height="40" rx="2" fill="rgba(122,106,154,0.55)"/>
+            <rect x="150" y="79"  width="12" height="23" rx="2" fill="rgba(122,106,154,0.5)"/>
+            <rect x="164" y="90"  width="12" height="12" rx="2" fill="rgba(122,106,154,0.46)"/>
+            <rect x="178" y="97"  width="12" height="5"  rx="2" fill="rgba(192,57,43,0.65)"/>
+            <rect x="192" y="100" width="12" height="2"  rx="2" fill="rgba(192,57,43,0.65)"/>
+            <line x1="178" y1="14" x2="178" y2="104" stroke="var(--accent)" stroke-width="1.2" stroke-dasharray="3,2"/>
+            <circle cx="196" cy="20" r="5" fill="var(--accent)"/>
+            <text x="118" y="11" font-family="DM Mono" font-size="8" fill="var(--accent)">p = 0.05 →</text>
+            <text x="170" y="30" font-family="DM Mono" font-size="8" fill="var(--accent)">observado</text>
+            <text x="20"  y="114" font-family="DM Mono" font-size="9" fill="var(--muted)">valores LISA bajo aleatoriedad</text>
+            <line x1="10" y1="102" x2="208" y2="102" stroke="rgba(44,26,14,0.15)" stroke-width="1"/>
+          </svg>
+          <div style="font-size:13px;color:var(--muted);line-height:1.65;margin-top:10px;font-family:var(--serif);">
+            El valor observado cae en la cola roja (zona de rechazo):
+            <span style="color:var(--accent2)">el azar raramente genera ese patrón</span>.
+            La vivienda E, en cambio, cae en el centro de la distribución — el azar lo replica
+            con frecuencia, de ahí el n.s.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="panel-card full">
+      <div class="card-label">Resumen del proceso completo</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:4px;">
+        <div style="text-align:center;padding:16px 8px;background:var(--formula-bg);border-radius:10px;border:1px solid rgba(139,69,19,0.15);">
+          <div style="font-family:var(--mono);font-size:22px;color:var(--accent);margin-bottom:6px;">①</div>
+          <div style="font-size:13px;color:var(--text);margin-bottom:4px;font-family:var(--serif);">Datos de precio</div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--serif);font-style:italic;">Precio €/m² por vivienda</div>
+        </div>
+        <div style="text-align:center;padding:16px 8px;background:var(--formula-bg);border-radius:10px;border:1px solid rgba(139,69,19,0.15);">
+          <div style="font-family:var(--mono);font-size:22px;color:var(--accent);margin-bottom:6px;">②</div>
+          <div style="font-size:13px;color:var(--text);margin-bottom:4px;font-family:var(--serif);">z-scores</div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--serif);font-style:italic;">Estandarizar respecto a la media</div>
+        </div>
+        <div style="text-align:center;padding:16px 8px;background:var(--formula-bg);border-radius:10px;border:1px solid rgba(139,69,19,0.15);">
+          <div style="font-family:var(--mono);font-size:22px;color:var(--accent);margin-bottom:6px;">③</div>
+          <div style="font-size:13px;color:var(--text);margin-bottom:4px;font-family:var(--serif);">Matriz W</div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--serif);font-style:italic;">Quién es vecino de quién</div>
+        </div>
+        <div style="text-align:center;padding:16px 8px;background:var(--formula-bg);border-radius:10px;border:1px solid rgba(139,69,19,0.15);">
+          <div style="font-family:var(--mono);font-size:22px;color:var(--accent);margin-bottom:6px;">④</div>
+          <div style="font-size:13px;color:var(--text);margin-bottom:4px;font-family:var(--serif);">Rezago Wz</div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--serif);font-style:italic;">Media z-score de los vecinos</div>
+        </div>
+        <div style="text-align:center;padding:16px 8px;background:var(--formula-bg);border-radius:10px;border:1px solid rgba(139,69,19,0.15);">
+          <div style="font-family:var(--mono);font-size:22px;color:var(--accent);margin-bottom:6px;">⑤</div>
+          <div style="font-size:13px;color:var(--text);margin-bottom:4px;font-family:var(--serif);">I de Moran</div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--serif);font-style:italic;">Pendiente de z vs. Wz</div>
+        </div>
+        <div style="text-align:center;padding:16px 8px;background:var(--formula-bg);border-radius:10px;border:1px solid rgba(139,69,19,0.15);">
+          <div style="font-family:var(--mono);font-size:22px;color:var(--accent);margin-bottom:6px;">⑥</div>
+          <div style="font-size:13px;color:var(--text);margin-bottom:4px;font-family:var(--serif);">LISA + p-valor</div>
+          <div style="font-size:12px;color:var(--muted);font-family:var(--serif);font-style:italic;">HH/LL/HL/LH + test Monte Carlo</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Navigation -->
+<div class="step-nav">
+  <button class="nav-btn" id="btn-prev" onclick="prevStep()" disabled>← Anterior</button>
+  <span class="step-indicator" id="step-ind">Paso 1 de 6</span>
+  <button class="nav-btn" id="btn-next" onclick="nextStep()">Siguiente →</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = 6;
+  function goTo(n) {
+    document.getElementById('step' + current).classList.remove('active');
+    document.querySelector('[data-step="' + current + '"]').classList.remove('active');
+    current = n;
+    document.getElementById('step' + current).classList.add('active');
+    document.querySelector('[data-step="' + current + '"]').classList.add('active');
+    document.getElementById('btn-prev').disabled = current === 1;
+    document.getElementById('btn-next').disabled = current === total;
+    document.getElementById('step-ind').textContent = 'Paso ' + current + ' de ' + total;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function nextStep() { if (current < total) goTo(current + 1); }
+  function prevStep() { if (current > 1)    goTo(current - 1); }
+</script>
+</body>
+</html>

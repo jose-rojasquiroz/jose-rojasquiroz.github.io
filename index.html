@@ -252,6 +252,7 @@
                 <button onclick="showSection('home')" id="btn-home" class="active-btn">About</button>
                 <button onclick="showSection('publications')" id="btn-publications">Publications</button>
                 <button onclick="showSection('data-projects')" id="btn-data-projects">Data projects</button>
+                <button onclick="showSection('teaching')" id="btn-teaching">Teaching</button>
             </nav>
         </header>
 
@@ -317,6 +318,42 @@
                     </li>
                 </ul>
             </div>
+
+            <div id="teaching" class="content-section">
+                <h2 style="font-size: 1.6rem; margin-bottom: 30px; font-weight: bold;">Housing Retrofit Seminar</h2>
+                
+                <p style="margin-bottom: 20px;">
+                    <em>Can the most vulnerable neighborhoods in our cities benefit from urban growth occurring in other areas?</em> This question guides research into an innovative instrument: Urban Development Rights Transfer (UDRT).
+                </p>
+
+                <p style="margin-bottom: 20px;">
+                    The idea is simple but powerful: residential buildings in vulnerable neighborhoods that need rehabilitation could "sell" their growth potential (buildable square meters they won't use) to developers in other areas of the city where it makes sense to build taller or at higher density. The proceeds from those sales would be directed toward rehabilitating the buildings that need it.
+                </p>
+
+                <p style="margin-bottom: 20px;">
+                    But then, which areas should be selected to receive/purchase development rights? How do we define and identify their viability? This seminar is framed as a <strong>quantitative approach</strong> to these questions.
+                </p>
+
+                <p style="margin-bottom: 25px;">
+                    Students will learn hedonic regression techniques, principal component analysis, clustering, and spatial econometrics—applied to real data from the municipality of Barcelona. The final deliverable will be an evidence-based territorial prioritization proposal for public intervention.
+                </p>
+
+                <h3 style="font-size: 1.3rem; margin-top: 30px; margin-bottom: 15px; font-weight: bold;">Course Materials</h3>
+                
+                <div style="margin-bottom: 30px;">
+                    <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">📊 Datasets</h4>
+                    <ul id="datasets-list" style="margin-left: 20px;">
+                        <li style="color: #999; font-style: italic;">Cargando archivos...</li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">📄 Course Materials & Slides</h4>
+                    <ul id="slides-list" style="margin-left: 20px;">
+                        <li style="color: #999; font-style: italic;">Cargando archivos...</li>
+                    </ul>
+                </div>
+            </div>
         </main>
 
         <footer>
@@ -331,6 +368,44 @@
     </div>
 
     <script>
+        // --- CARGAR ÍNDICE DE ARCHIVOS DE ENSEÑANZA ---
+        async function loadTeachingMaterials() {
+            try {
+                const response = await fetch('teaching/srgvua_25_26/index.json');
+                const data = await response.json();
+                
+                // Renderizar datasets
+                const datasetsList = document.getElementById('datasets-list');
+                if (data.datasets && data.datasets.length > 0) {
+                    datasetsList.innerHTML = data.datasets.map(file => `
+                        <li style="list-style-type: disc;">
+                            <a href="teaching/srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
+                            <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
+                        </li>
+                    `).join('');
+                } else {
+                    datasetsList.innerHTML = '<li style="color: #999; font-style: italic;">No datasets available yet</li>';
+                }
+                
+                // Renderizar slides
+                const slidesList = document.getElementById('slides-list');
+                if (data.slides && data.slides.length > 0) {
+                    slidesList.innerHTML = data.slides.map(file => `
+                        <li style="list-style-type: disc;">
+                            <a href="teaching/srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
+                            <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
+                        </li>
+                    `).join('');
+                } else {
+                    slidesList.innerHTML = '<li style="color: #999; font-style: italic;">No materials available yet</li>';
+                }
+            } catch (error) {
+                console.error('Error cargando materiales:', error);
+                document.getElementById('datasets-list').innerHTML = '<li style="color: #c00;">Error loading datasets</li>';
+                document.getElementById('slides-list').innerHTML = '<li style="color: #c00;">Error loading slides</li>';
+            }
+        }
+
         function showSection(sectionId) {
             // --- 1. LÓGICA DE LA FOTO ---
             const header = document.getElementById('main-header');
@@ -363,6 +438,11 @@
 
             // En móvil, cerrar el menú al seleccionar sección
             document.body.classList.remove('nav-open');
+
+            // Cargar materiales de enseñanza cuando se abre esa sección
+            if (sectionId === 'teaching') {
+                loadTeachingMaterials();
+            }
         }
 
         // Toggle del menú móvil
