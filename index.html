@@ -379,6 +379,15 @@
     </div>
 
     <script>
+        // --- COPIAR RUTA AL PORTAPAPELES ---
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Ruta copiada al portapapeles');
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+            });
+        }
+
         // --- CARGAR ÍNDICE DE ARCHIVOS DE ENSEÑANZA ---
         async function loadTeachingMaterials() {
             try {
@@ -388,12 +397,18 @@
                 // Renderizar datasets
                 const datasetsList = document.getElementById('datasets-list');
                 if (data.datasets && data.datasets.length > 0) {
-                    datasetsList.innerHTML = data.datasets.map(file => `
-                        <li style="list-style-type: disc;">
-                            <a href="teaching/srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
-                            <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
-                        </li>
-                    `).join('');
+                    datasetsList.innerHTML = data.datasets.map(file => {
+                        const isGpkg = file.type === 'gpkg';
+                        const githubUrl = isGpkg ? `https://github.com/jose-rojasquiroz/jose-rojasquiroz.github.io/raw/main/teaching/srgvua_25_26/${file.path}` : '';
+                        
+                        return `
+                            <li style="list-style-type: disc;">
+                                <a href="teaching/srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
+                                <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
+                                ${isGpkg ? `<button onclick="copyToClipboard('${githubUrl}')" style="background: none; border: none; cursor: pointer; padding: 0 4px; font-size: 0.85rem; color: #2c3e50; vertical-align: middle; transition: opacity 0.2s;" title="Copiar ruta de GitHub" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">📋</button>` : ''}
+                            </li>
+                        `;
+                    }).join('');
                 } else {
                     datasetsList.innerHTML = '<li style="color: #999; font-style: italic;">No datasets available yet</li>';
                 }
