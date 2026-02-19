@@ -2,11 +2,467 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=/#teaching">
-    <title>Housing Retrofit Seminar - José Rojas-Quiroz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>José Rojas-Quiroz</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/dreampulse/computer-modern-web-font@master/fonts.css">
+
+    <style>
+        /* --- CONFIGURACIÓN ESTILO LATEX --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #222;
+            --link-color: #2c3e50;
+            --font-latex: "Computer Modern Serif", serif;
+            --icon-color: #333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-latex);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 750px;
+            width: 100%;
+            padding: 60px 25px;
+            /* Flexbox para empujar el footer al final si el contenido es corto */
+            display: flex;
+            flex-direction: column; 
+        }
+
+        /* --- ENCABEZADO --- */
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            transition: all 0.8s ease; 
+            position: relative; /* para colocar iconos a la derecha */
+        }
+
+        /* --- FOTO DE PERFIL CON ANIMACIÓN --- */
+        .profile-photo {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+            margin: 0 auto 25px auto; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            
+            /* Animación de colapso */
+            max-height: 150px; 
+            opacity: 1;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            overflow: hidden;
+        }
+
+        /* Clase para ocultar la foto */
+        header.header-compact .profile-photo {
+            max-height: 0;
+            margin-bottom: 0;
+            opacity: 0;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #444;
+            margin-bottom: 25px;
+        }
+
+        /* --- NAVEGACIÓN --- */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 35px;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            font-family: var(--font-latex);
+            font-size: 1.05rem;
+            cursor: pointer;
+            color: #666;
+            position: relative;
+            transition: color 0.3s ease;
+            padding: 5px;
+        }
+
+        nav button:hover, nav button.active-btn {
+            color: #000;
+        }
+
+        nav button::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: 0;
+            left: 50%;
+            background-color: #000;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav button:hover::after, nav button.active-btn::after {
+            width: 100%;
+        }
+
+        /* --- CONTENIDO --- */
+        main {
+            flex-grow: 1; /* Esto asegura que el footer se quede abajo */
+        }
+
+        .content-section {
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards;
+            padding-top: 5px;
+        }
+
+        .content-section.active-section {
+            display: block;
+        }
+
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+            font-size: 1.1rem;
+        }
+
+        ul {
+            list-style-type: none;
+            font-size: 1.1rem;
+        }
+
+        li {
+            margin-bottom: 18px;
+            text-align: justify;
+        }
+
+        .year {
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            margin-top: 80px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 12px;
+            padding-bottom: 20px;
+        }
+
+        .about-social-icons a {
+            opacity: 0.75;
+            transition: opacity 0.2s ease;
+        }
+
+        .about-social-icons a:hover { 
+            opacity: 1;
+        }
+
+        .brand-icon { width: 18px; height: 18px; display: block; }
+
+        /* Botón para menú móvil (colapsable) */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-family: var(--font-latex);
+            font-size: 0.95rem;
+            color: #555;
+            margin: 8px auto 0 auto;
+            cursor: pointer;
+        }
+
+        /* Estilo sutil para la bandera SVG */
+        .flag-svg {
+            display: inline-block;
+            vertical-align: middle;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .flag-svg:hover {
+            opacity: 1; /* Brilla un poco al pasar el mouse */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @media (max-width: 600px) {
+            /* menú siempre visible en línea horizontal */
+            .menu-toggle { display: none; }
+            nav { display: flex; flex-direction: row; gap: 8px; margin-top: 12px; justify-content: center; }
+            nav button { font-size: 1.0rem; padding: 2px 4px; }
+        }
+    </style>
 </head>
 <body>
-    <p>Redirecting to Teaching section...</p>
-    <script>window.location.replace('/#teaching');</script>
+
+    <div class="container">
+        <header id="main-header">
+            <img src="../foto_joserojasquiroz.jpg" alt="José Rojas-Quiroz" class="profile-photo">
+            
+            <h1>José Rojas-Quiroz</h1>
+            
+            <!-- Toggle para menú móvil -->
+            <button id="menu-toggle" class="menu-toggle" aria-label="Toggle menu">Menu</button>
+            
+            <nav>
+                <button onclick="showSection('home')" id="btn-home">About</button>
+                <button onclick="showSection('publications')" id="btn-publications">Publications</button>
+                <button onclick="showSection('data-projects')" id="btn-data-projects">Data projects</button>
+                <button onclick="showSection('teaching')" id="btn-teaching" class="active-btn">Teaching</button>
+            </nav>
+        </header>
+
+        <main>
+            <div id="home" class="content-section">
+                <p>
+                    I am a predoctoral research assistant at the Center for Land Policy and Valuations from 
+                    the Polytechnic University of Catalonia. My formation is in architecture, but now I'm conducting 
+                    research at the intersection of urban planning and management and data science—which in terms 
+                    of academia is referred as spatial/urban economics.
+                </p>
+                <p>
+                    In case you are interested to contact me you can do it at jose.carlos.rojas[at]upc.edu.
+                </p>
+                <div class="about-social-icons" style="text-align: center; margin-top: 30px;">
+                    <a href="https://www.linkedin.com/in/jose-rojasquiroz/" target="_blank" rel="noopener" aria-label="LinkedIn" style="display: inline-block; margin: 0 10px;">
+                        <img class="brand-icon" alt="LinkedIn" src="../svg/linkedin-mark.svg" />
+                    </a>
+                    <a href="https://github.com/jose-rojasquiroz/" target="_blank" rel="noopener" aria-label="GitHub" style="display: inline-block; margin: 0 10px;">
+                        <img class="brand-icon" alt="GitHub" src="../svg/github-mark.svg" />
+                    </a>
+                    <a href="https://futur.upc.edu/JoseCarlosRojasQuiroz" target="_blank" rel="noopener" aria-label="UPC" style="display: inline-block; margin: 0 10px;">
+                        <img class="brand-icon" alt="UPC" src="../svg/upc-mark.svg" />
+                    </a>
+                </div>
+            </div>
+
+            <div id="publications" class="content-section">
+                <ul>
+                    <li>
+                        <span class="year">[2022]</span>
+                        <strong>Determining Equality of Infection Rates: A Spatial Analysis of Factors Associated with the Spread of COVID-19 in Barcelona, Spain.</strong>
+                        <em>Journal of Urban Planning and Development</em>.
+                        <a href="https://www.researchgate.net/profile/Jose-Carlos-Rojas/publication/361845629_Determining_Equality_of_Infection_Rates_A_Spatial_Analysis_of_Factors_Associated_with_the_Spread_of_COVID-19_in_Barcelona_Spain/links/658dab050bb2c7472b1821af/Determining-Equality-of-Infection-Rates-A-Spatial-Analysis-of-Factors-Associated-with-the-Spread-of-COVID-19-in-Barcelona-Spain.pdf" target="_blank" rel="noopener">[PDF]</a>
+                        DOI: 10.1061/(ASCE)UP.1943-5444.0000848
+                    </li>
+                    <li>
+                        <span class="year">[2024]</span>
+                        <strong>¿Un país de provincias o de ciudades no metropolitanas? La COVID-19 como caso de estudio para entender las dinámicas de las ciudades en el Perú.</strong>
+                        <em>ACE: Arquitectura, Ciudad y Entorno</em>.
+                        <a href="https://revistes.upc.edu/index.php/ACE/article/view/12075/2703" target="_blank" rel="noopener">[PDF]</a>
+                        DOI: 10.5821/ace.18.54.12075
+                    </li>
+                </ul>
+                <p style="text-align: center;">
+                    You can also find me on 
+                    <a href="https://scholar.google.com/citations?user=nKZV_Y4AAAAJ&hl=es" target="_blank" rel="noopener">Google Scholar</a>.
+                </p>
+            </div>
+
+            <div id="data-projects" class="content-section">
+                <ul>
+                    <li>
+                        <strong>ORCAL Peru</strong>
+                        <br>
+                        <a href="https://jose-rojasquiroz.github.io/orcalperu/" target="_blank" rel="noopener">[Project website]</a>
+                        <a href="https://github.com/jose-rojasquiroz/orcalperu" target="_blank" rel="noopener" aria-label="GitHub repository" style="margin-left:6px; vertical-align: middle; display:inline-block;">
+                            <img alt="GitHub" src="../svg/github-mark.svg" style="width:18px;height:18px;display:inline-block;" />
+                        </a>
+                        <p style="margin-top:8px;">
+                            An analysis of the orientation of the street network across 92 Peruvian cities, based on Geoff Boeing's work using the Python OSMnx library. Results can be compared across geographic regions and all data are shared for full reproducibility. No utilitarian goal, purely exploratory.
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="teaching" class="content-section active-section">
+                <h2 style="font-size: 1.6rem; margin-bottom: 30px; font-weight: bold;">Housing Retrofit Seminar</h2>
+                
+                <p style="margin-bottom: 20px;">
+                    <em>Can the most vulnerable neighborhoods in our cities benefit from urban growth occurring in other 
+                        areas?</em> This question guides research into an innovative instrument: Transfer of Development Rights (TDR).
+                </p>
+
+                <p style="margin-bottom: 20px;">
+                    The idea is simple but (we think) powerful: residential buildings in vulnerable neighborhoods that need rehabilitation 
+                    could "sell" their growth potential (buildable square meters they won't use) to developers in other areas 
+                    of the city where it makes sense to build taller or at higher density. The proceeds from those sales would be 
+                    directed toward retrofitting the buildings that need it.
+                </p>
+
+                <p style="margin-bottom: 20px;">
+                    But then, which areas should be selected to receive/purchase DR? How do we define and identify their 
+                    viability? This seminar is framed as a quantitative approach to these questions.
+                </p>
+
+                <p style="margin-bottom: 25px;">
+                    Students will learn hedonic regression techniques, Principal Component Analysis, 
+                    clustering, and spatial econometrics—applied to real data of Barcelona. 
+                    The final deliverable will be an evidence-based territorial prioritization proposal for public intervention.
+                </p>
+
+                <h3 style="font-size: 1.3rem; margin-top: 30px; margin-bottom: 15px; font-weight: bold;">Course Materials</h3>
+                
+                <p style="margin-bottom: 30px;">
+                    <a href="srgvua_25_26/main_silabo.pdf" target="_blank" rel="noopener" style="text-decoration: underline;">Syllabus</a>
+                </p>
+
+                <div style="margin-bottom: 30px;">
+                    <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Datasets</h4>
+                    <ul id="datasets-list" style="margin-left: 20px;">
+                        <li style="color: #999; font-style: italic;">Cargando archivos...</li>
+                    </ul>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Slides</h4>
+                    <ul id="slides-list" style="margin-left: 20px;">
+                        <li style="color: #999; font-style: italic;">Cargando archivos...</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <svg width="18" height="18" viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" class="flag-svg">
+                <title>Peru</title>
+                <rect width="10" height="20" fill="#D91023"/>
+                <rect x="10" width="10" height="20" fill="#FFFFFF"/>
+                <rect x="20" width="10" height="20" fill="#D91023"/>
+                <rect width="30" height="20" fill="none" stroke="#eee" stroke-width="1"/>
+            </svg>
+        </footer>
+    </div>
+
+    <script>
+        // --- CARGAR ÍNDICE DE ARCHIVOS DE ENSEÑANZA ---
+        async function loadTeachingMaterials() {
+            try {
+                const response = await fetch('srgvua_25_26/index.json');
+                const data = await response.json();
+                
+                // Renderizar datasets
+                const datasetsList = document.getElementById('datasets-list');
+                if (data.datasets && data.datasets.length > 0) {
+                    datasetsList.innerHTML = data.datasets.map(file => `
+                        <li style="list-style-type: disc;">
+                            <a href="srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
+                            <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
+                        </li>
+                    `).join('');
+                } else {
+                    datasetsList.innerHTML = '<li style="color: #999; font-style: italic;">No datasets available yet</li>';
+                }
+                
+                // Renderizar slides
+                const slidesList = document.getElementById('slides-list');
+                if (data.slides && data.slides.length > 0) {
+                    slidesList.innerHTML = data.slides.map(file => `
+                        <li style="list-style-type: disc;">
+                            <a href="srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
+                            <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
+                        </li>
+                    `).join('');
+                } else {
+                    slidesList.innerHTML = '<li style="color: #999; font-style: italic;">No materials available yet</li>';
+                }
+            } catch (error) {
+                console.error('Error cargando materiales:', error);
+                document.getElementById('datasets-list').innerHTML = '<li style="color: #c00;">Error loading datasets</li>';
+                document.getElementById('slides-list').innerHTML = '<li style="color: #c00;">Error loading slides</li>';
+            }
+        }
+
+        function showSection(sectionId) {
+            // --- 1. LÓGICA DE LA FOTO ---
+            const header = document.getElementById('main-header');
+            
+            if (sectionId === 'home') {
+                header.classList.remove('header-compact');
+            } else {
+                header.classList.add('header-compact');
+            }
+
+            // --- 2. LÓGICA DE LAS PESTAÑAS ---
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active-section');
+                section.style.animation = 'none';
+                section.offsetHeight; /* trigger reflow */
+                section.style.animation = null; 
+            });
+
+            const buttons = document.querySelectorAll('nav button');
+            buttons.forEach(btn => {
+                btn.classList.remove('active-btn');
+            });
+
+            const activeSection = document.getElementById(sectionId);
+            activeSection.classList.add('active-section');
+
+            const activeButton = document.getElementById('btn-' + sectionId);
+            activeButton.classList.add('active-btn');
+
+            // En móvil, cerrar el menú al seleccionar sección
+            document.body.classList.remove('nav-open');
+
+            // Cargar materiales de enseñanza cuando se abre esa sección
+            if (sectionId === 'teaching') {
+                loadTeachingMaterials();
+            }
+        }
+
+        // Toggle del menú móvil
+        const menuToggle = document.getElementById('menu-toggle');
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                document.body.classList.toggle('nav-open');
+            });
+        }
+    </script>
 </body>
 </html>
