@@ -469,6 +469,9 @@
             if (sectionId === 'teaching') {
                 loadTeachingMaterials();
             }
+            
+            // Para tener un enlace directo a cada sección
+            window.history.pushState(null, null, '#' + sectionId);
         }
 
         // Toggle del menú móvil
@@ -478,6 +481,16 @@
                 document.body.classList.toggle('nav-open');
             });
         }
+
+        // Revisar si hay un "hash" en la URL al cargar la página
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.substring(1); // Quita el símbolo '#'
+            const validSections = ['home', 'publications', 'data-projects', 'teaching'];
+
+            if (hash && validSections.includes(hash)) {
+                showSection(hash);
+            }
+        });
     </script>
 </body>
 </html>
