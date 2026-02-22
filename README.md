@@ -7,9 +7,9 @@ Este repositorio incluye un script Python que mantiene sincronizado los archivos
 Escanea las carpetas `teaching/srgvua_25_26/data/` y `teaching/srgvua_25_26/pdfs/` y genera un archivo `index.json` con la lista de todos los archivos encontrados.
 
 Ejecutar cuando:
-- Agregues nuevos archivos de datos (CSV, XLSX, GPKG, MD, etc.)
-- Subas nuevas láminas o materiales (PDF, HTML, DOCX, etc.)
-- Elimines archivos de las carpetas
+- Agregue nuevos archivos de datos (CSV, XLSX, GPKG, MD, etc.)
+- Suba nuevas láminas o materiales (PDF, HTML, DOCX, etc.)
+- Elimine archivos de las carpetas
 
 Comando:
 ```bash
