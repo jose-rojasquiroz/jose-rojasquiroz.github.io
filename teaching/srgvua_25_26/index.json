@@ -20,6 +20,33 @@
       "name": "srgvua_25_26-sesion_03.pdf",
       "path": "pdfs/srgvua_25_26-sesion_03.pdf",
       "type": "pdf"
+    },
+    {
+      "name": "srgvua_25_26-sesion_04.pdf",
+      "path": "pdfs/srgvua_25_26-sesion_04.pdf",
+      "type": "pdf"
+    },
+    {
+      "name": "srgvua_25_26-sesion_04_repaso.pdf",
+      "path": "pdfs/srgvua_25_26-sesion_04_repaso.pdf",
+      "type": "pdf"
+    }
+  ],
+  "notebooks": [
+    {
+      "name": "cuaderno_01_ols.ipynb",
+      "path": "notebooks/cuaderno_01_ols.ipynb",
+      "type": "ipynb"
+    },
+    {
+      "name": "cuaderno_02_espacial_xgboost.ipynb",
+      "path": "notebooks/cuaderno_02_espacial_xgboost.ipynb",
+      "type": "ipynb"
+    },
+    {
+      "name": "cuaderno_03_pca_kmeans.ipynb",
+      "path": "notebooks/cuaderno_03_pca_kmeans.ipynb",
+      "type": "ipynb"
     }
   ]
 }

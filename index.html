@@ -364,6 +364,13 @@
                         <li style="color: #999; font-style: italic;">Cargando archivos...</li>
                     </ul>
                 </div>
+
+                <div style="margin-bottom: 30px;">
+                    <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Notebooks</h4>
+                    <ul id="notebooks-list" style="margin-left: 20px;">
+                        <li style="color: #999; font-style: italic;">Cargando archivos...</li>
+                    </ul>
+                </div>
             </div>
         </main>
 
@@ -424,6 +431,19 @@
                     `).join('');
                 } else {
                     slidesList.innerHTML = '<li style="color: #999; font-style: italic;">No materials available yet</li>';
+                }
+
+                // Renderizar notebooks
+                const notebooksList = document.getElementById('notebooks-list');
+                if (data.notebooks && data.notebooks.length > 0) {
+                    notebooksList.innerHTML = data.notebooks.map(file => `
+                        <li style="list-style-type: disc;">
+                            <a href="https://nbviewer.org/github/jose-rojasquiroz/jose-rojasquiroz.github.io/blob/main/teaching/srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
+                            <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
+                        </li>
+                    `).join('');
+                } else {
+                    notebooksList.innerHTML = '<li style="color: #999; font-style: italic;">No notebooks available yet</li>';
                 }
             } catch (error) {
                 console.error('Error cargando materiales:', error);

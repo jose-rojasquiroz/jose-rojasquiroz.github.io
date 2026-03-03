@@ -34,12 +34,14 @@ def main():
     teaching_path = os.path.join(base_path, 'teaching', 'srgvua_25_26')
     data_path = os.path.join(teaching_path, 'data')
     pdfs_path = os.path.join(teaching_path, 'pdfs')
+    notebooks_path = os.path.join(teaching_path, 'notebooks')
     output_file = os.path.join(teaching_path, 'index.json')
     
     # Generar índice
     index = {
         "datasets": get_files_from_directory(data_path),
-        "slides": get_files_from_directory(pdfs_path)
+        "slides": get_files_from_directory(pdfs_path),
+        "notebooks": get_files_from_directory(notebooks_path)
     }
     
     # Guardar JSON
@@ -49,6 +51,7 @@ def main():
     print(f"✅ Index generado: {output_file}")
     print(f"📊 Datasets encontrados: {len(index['datasets'])}")
     print(f"📄 Slides encontrados: {len(index['slides'])}")
+    print(f"📓 Notebooks encontrados: {len(index['notebooks'])}")
     
     # Mostrar contenido
     if index['datasets']:
@@ -59,6 +62,11 @@ def main():
     if index['slides']:
         print("\n📄 Slides:")
         for f in index['slides']:
+            print(f"  - {f['name']}")
+    
+    if index['notebooks']:
+        print("\n📓 Notebooks:")
+        for f in index['notebooks']:
             print(f"  - {f['name']}")
 
 if __name__ == '__main__':
