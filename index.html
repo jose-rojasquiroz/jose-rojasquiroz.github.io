@@ -398,7 +398,7 @@
         // --- CARGAR ÍNDICE DE ARCHIVOS DE ENSEÑANZA ---
         async function loadTeachingMaterials() {
             try {
-                const response = await fetch('teaching/srgvua_25_26/index.json');
+                const response = await fetch(`teaching/srgvua_25_26/index.json?v=${Date.now()}`);
                 const data = await response.json();
                 
                 // Renderizar datasets
@@ -449,6 +449,7 @@
                 console.error('Error cargando materiales:', error);
                 document.getElementById('datasets-list').innerHTML = '<li style="color: #c00;">Error loading datasets</li>';
                 document.getElementById('slides-list').innerHTML = '<li style="color: #c00;">Error loading slides</li>';
+                document.getElementById('notebooks-list').innerHTML = '<li style="color: #c00;">Error loading notebooks</li>';
             }
         }
 
