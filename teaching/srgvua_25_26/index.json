@@ -47,6 +47,11 @@
       "name": "cuaderno_03_pca_kmeans.ipynb",
       "path": "notebooks/cuaderno_03_pca_kmeans.ipynb",
       "type": "ipynb"
+    },
+    {
+      "name": "cuaderno_04_ols_cuartiles.ipynb",
+      "path": "notebooks/cuaderno_04_ols_cuartiles.ipynb",
+      "type": "ipynb"
     }
   ]
 }
