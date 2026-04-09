@@ -146,6 +146,47 @@
             display: block;
         }
 
+        /* --- TEACHING ACCORDION --- */
+        .teaching-accordion-header {
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .teaching-accordion-header::after {
+            content: '+';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            line-height: 1;
+            font-size: 1.4rem;
+            color: #444;
+            pointer-events: none;
+        }
+
+        .teaching-accordion.open .teaching-accordion-header::after {
+            content: '−';
+        }
+
+        .teaching-accordion-header h2 {
+            padding-right: 26px; /* deja espacio para el indicador sin cambiar altura */
+        }
+
+        .teaching-accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 400ms ease-in-out;
+        }
+
+        .teaching-accordion.open .teaching-accordion-content {
+            max-height: 2000px;
+        }
+
+        .teaching-accordion-content-inner {
+            padding-top: 30px; /* reemplaza el margen inferior del h2 solo cuando está abierto */
+        }
+
         p {
             margin-bottom: 20px;
             text-align: justify;
@@ -327,56 +368,64 @@
             </div>
 
             <div id="teaching" class="content-section">
-                <h2 style="font-size: 1.6rem; margin-bottom: 30px; font-weight: bold;">Housing Retrofit Seminar</h2>
-                
-                <p style="margin-bottom: 20px;">
-                    <em>Can the most vulnerable neighborhoods in our cities benefit from urban growth occurring in other 
-                        areas?</em> This question guides research into an innovative instrument: Transfer of Development Rights (TDR).
-                </p>
+                <div class="teaching-accordion" id="teaching-accordion">
+                    <div class="teaching-accordion-header" id="teaching-accordion-header" role="button" tabindex="0" aria-controls="teaching-accordion-content" aria-expanded="false">
+                        <h2 style="font-size: 1.6rem; margin-bottom: 0; font-weight: bold;">Housing Retrofit Seminar</h2>
+                    </div>
 
-                <p style="margin-bottom: 20px;">
-                    The idea is simple but (we think) powerful: residential buildings in vulnerable neighborhoods that need rehabilitation 
-                    could "sell" their growth potential (buildable square meters they won't use) to developers in other areas 
-                    of the city where it makes sense to build taller or at higher density. The proceeds from those sales would be 
-                    directed toward retrofitting the buildings that need it.
-                </p>
+                    <div class="teaching-accordion-content" id="teaching-accordion-content" aria-hidden="true">
+                        <div class="teaching-accordion-content-inner">
+                            <p style="margin-bottom: 20px;">
+                                <em>Can the most vulnerable neighborhoods in our cities benefit from urban growth occurring in other 
+                                    areas?</em> This question guides research into an innovative instrument: Transfer of Development Rights (TDR).
+                            </p>
 
-                <p style="margin-bottom: 20px;">
-                    But then, which areas should be selected to receive/purchase DR? How do we define and identify their 
-                    viability? This seminar is framed as a quantitative approach to these questions.
-                </p>
+                            <p style="margin-bottom: 20px;">
+                                The idea is simple but (we think) powerful: residential buildings in vulnerable neighborhoods that need rehabilitation 
+                                could "sell" their growth potential (buildable square meters they won't use) to developers in other areas 
+                                of the city where it makes sense to build taller or at higher density. The proceeds from those sales would be 
+                                directed toward retrofitting the buildings that need it.
+                            </p>
 
-                <p style="margin-bottom: 25px;">
-                    Students will learn hedonic regression techniques, Principal Component Analysis, 
-                    clustering, and spatial econometrics—applied to real data of Barcelona. 
-                    The final deliverable will be an evidence-based territorial prioritization proposal for public intervention.
-                </p>
+                            <p style="margin-bottom: 20px;">
+                                But then, which areas should be selected to receive/purchase DR? How do we define and identify their 
+                                viability? This seminar is framed as a quantitative approach to these questions.
+                            </p>
 
-                <h3 style="font-size: 1.3rem; margin-top: 30px; margin-bottom: 15px; font-weight: bold;">Course Materials</h3>
-                
-                <p style="margin-bottom: 30px;">
-                    <a href="teaching/srgvua_25_26/main_silabo.pdf" target="_blank" rel="noopener" style="text-decoration: underline;">Syllabus</a>
-                </p>
+                            <p style="margin-bottom: 25px;">
+                                Students will learn hedonic regression techniques, Principal Component Analysis, 
+                                clustering, and spatial econometrics—applied to real data of Barcelona. 
+                                The final deliverable will be an evidence-based territorial prioritization proposal for public intervention.
+                            </p>
 
-                <div style="margin-bottom: 30px;">
-                    <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Datasets</h4>
-                    <ul id="datasets-list" style="margin-left: 20px;">
-                        <li style="color: #999; font-style: italic;">Cargando archivos...</li>
-                    </ul>
-                </div>
+                            <h3 style="font-size: 1.3rem; margin-top: 30px; margin-bottom: 15px; font-weight: bold;">Course Materials</h3>
+                            
+                            <p style="margin-bottom: 30px;">
+                                <a href="teaching/srgvua_25_26/main_silabo.pdf" target="_blank" rel="noopener" style="text-decoration: underline;">Syllabus</a>
+                            </p>
 
-                <div style="margin-bottom: 30px;">
-                    <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Slides</h4>
-                    <ul id="slides-list" style="margin-left: 20px;">
-                        <li style="color: #999; font-style: italic;">Cargando archivos...</li>
-                    </ul>
-                </div>
+                            <div style="margin-bottom: 30px;">
+                                <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Datasets</h4>
+                                <ul id="datasets-list" style="margin-left: 20px;">
+                                    <li style="color: #999; font-style: italic;">Cargando archivos...</li>
+                                </ul>
+                            </div>
 
-                <div style="margin-bottom: 30px;">
-                    <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Notebooks</h4>
-                    <ul id="notebooks-list" style="margin-left: 20px;">
-                        <li style="color: #999; font-style: italic;">Cargando archivos...</li>
-                    </ul>
+                            <div style="margin-bottom: 30px;">
+                                <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Slides</h4>
+                                <ul id="slides-list" style="margin-left: 20px;">
+                                    <li style="color: #999; font-style: italic;">Cargando archivos...</li>
+                                </ul>
+                            </div>
+
+                            <div style="margin-bottom: 30px;">
+                                <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Notebooks</h4>
+                                <ul id="notebooks-list" style="margin-left: 20px;">
+                                    <li style="color: #999; font-style: italic;">Cargando archivos...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
@@ -518,6 +567,35 @@
 
         // Revisar si hay un "hash" en la URL al cargar la página
         window.addEventListener('DOMContentLoaded', () => {
+            // --- ACORDEÓN TEACHING (estado inicial: cerrado) ---
+            const teachingAccordion = document.getElementById('teaching-accordion');
+            const teachingAccordionHeader = document.getElementById('teaching-accordion-header');
+            const teachingAccordionContent = document.getElementById('teaching-accordion-content');
+
+            const setTeachingAccordionOpen = (isOpen) => {
+                if (!teachingAccordion || !teachingAccordionHeader || !teachingAccordionContent) return;
+                teachingAccordion.classList.toggle('open', isOpen);
+                teachingAccordionHeader.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                teachingAccordionContent.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+            };
+
+            if (teachingAccordion && teachingAccordionHeader && teachingAccordionContent) {
+                setTeachingAccordionOpen(false);
+
+                teachingAccordionHeader.addEventListener('click', () => {
+                    const isOpen = teachingAccordion.classList.contains('open');
+                    setTeachingAccordionOpen(!isOpen);
+                });
+
+                teachingAccordionHeader.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        const isOpen = teachingAccordion.classList.contains('open');
+                        setTeachingAccordionOpen(!isOpen);
+                    }
+                });
+            }
+
             const hash = window.location.hash.substring(1); // Quita el símbolo '#'
             const validSections = ['home', 'publications', 'data-projects', 'teaching'];
 
