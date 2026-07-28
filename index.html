@@ -146,47 +146,6 @@
             display: block;
         }
 
-        /* --- TEACHING ACCORDION --- */
-        .teaching-accordion-header {
-            position: relative;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .teaching-accordion-header::after {
-            content: '+';
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            line-height: 1;
-            font-size: 1.4rem;
-            color: #444;
-            pointer-events: none;
-        }
-
-        .teaching-accordion.open .teaching-accordion-header::after {
-            content: '−';
-        }
-
-        .teaching-accordion-header h2 {
-            padding-right: 26px; /* deja espacio para el indicador sin cambiar altura */
-        }
-
-        .teaching-accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 400ms ease-in-out;
-        }
-
-        .teaching-accordion.open .teaching-accordion-content {
-            max-height: 2000px;
-        }
-
-        .teaching-accordion-content-inner {
-            padding-top: 30px; /* reemplaza el margen inferior del h2 solo cuando está abierto */
-        }
-
         p {
             margin-bottom: 20px;
             text-align: justify;
@@ -368,65 +327,34 @@
             </div>
 
             <div id="teaching" class="content-section">
-                <div class="teaching-accordion" id="teaching-accordion">
-                    <div class="teaching-accordion-header" id="teaching-accordion-header" role="button" tabindex="0" aria-controls="teaching-accordion-content" aria-expanded="false">
-                        <h2 style="font-size: 1.6rem; margin-bottom: 0; font-weight: bold;">Housing Retrofit Seminar</h2>
-                    </div>
+                <h2 style="font-size: 1.6rem; margin-bottom: 30px; font-weight: bold;">Housing Retrofit Seminar</h2>
+                
+                <p style="margin-bottom: 20px;">
+                    <em>Can the most vulnerable neighborhoods in our cities benefit from urban growth occurring in other 
+                        areas?</em> This question guides research into an innovative instrument: Transfer of Development Rights (TDR).
+                </p>
 
-                    <div class="teaching-accordion-content" id="teaching-accordion-content" aria-hidden="true">
-                        <div class="teaching-accordion-content-inner">
-                            <p style="margin-bottom: 20px;">
-                                <em>Can the most vulnerable neighborhoods in our cities benefit from urban growth occurring in other 
-                                    areas?</em> This question guides research into an innovative instrument: Transfer of Development Rights (TDR).
-                            </p>
+                <p style="margin-bottom: 20px;">
+                    The idea is simple but (we think) powerful: residential buildings in vulnerable neighborhoods that need rehabilitation 
+                    could "sell" their growth potential (buildable square meters they won't use) to developers in other areas 
+                    of the city where it makes sense to build taller or at higher density. The proceeds from those sales would be 
+                    directed toward retrofitting the buildings that need it.
+                </p>
 
-                            <p style="margin-bottom: 20px;">
-                                The idea is simple but (we think) powerful: residential buildings in vulnerable neighborhoods that need rehabilitation 
-                                could "sell" their growth potential (buildable square meters they won't use) to developers in other areas 
-                                of the city where it makes sense to build taller or at higher density. The proceeds from those sales would be 
-                                directed toward retrofitting the buildings that need it.
-                            </p>
+                <p style="margin-bottom: 20px;">
+                    But then, which areas should be selected to receive/purchase DR? How do we define and identify their 
+                    viability? This seminar is framed as a quantitative approach to these questions.
+                </p>
 
-                            <p style="margin-bottom: 20px;">
-                                But then, which areas should be selected to receive/purchase DR? How do we define and identify their 
-                                viability? This seminar is framed as a quantitative approach to these questions.
-                            </p>
+                <p style="margin-bottom: 25px;">
+                    Students will learn hedonic regression techniques, Principal Component Analysis, 
+                    clustering, and spatial econometrics—applied to real data of Barcelona. 
+                    The final deliverable will be an evidence-based territorial prioritization proposal for public intervention.
+                </p>
 
-                            <p style="margin-bottom: 25px;">
-                                Students will learn hedonic regression techniques, Principal Component Analysis, 
-                                clustering, and spatial econometrics—applied to real data of Barcelona. 
-                                The final deliverable will be an evidence-based territorial prioritization proposal for public intervention.
-                            </p>
-
-                            <h3 style="font-size: 1.3rem; margin-top: 30px; margin-bottom: 15px; font-weight: bold;">Course Materials</h3>
-                            
-                            <p style="margin-bottom: 30px;">
-                                <a href="teaching/srgvua_25_26/main_silabo.pdf" target="_blank" rel="noopener" style="text-decoration: underline;">Syllabus</a>
-                            </p>
-
-                            <div style="margin-bottom: 30px;">
-                                <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Datasets</h4>
-                                <ul id="datasets-list" style="margin-left: 20px;">
-                                    <li style="color: #999; font-style: italic;">Cargando archivos...</li>
-                                </ul>
-                            </div>
-
-                            <div style="margin-bottom: 30px;">
-                                <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Slides</h4>
-                                <ul id="slides-list" style="margin-left: 20px;">
-                                    <li style="color: #999; font-style: italic;">Cargando archivos...</li>
-                                </ul>
-                            </div>
-
-                            <div style="margin-bottom: 30px;">
-                                <h4 style="font-size: 1.1rem; margin-bottom: 12px; font-weight: bold;">Notebooks</h4>
-                                <ul id="notebooks-list" style="margin-left: 20px;">
-                                    <li style="color: #999; font-style: italic;">Cargando archivos...</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <p style="margin-bottom: 30px;">
+                    <a href="teaching/srgvua_25_26/main_silabo.pdf" target="_blank" rel="noopener" style="text-decoration: underline;">Syllabus</a>
+                </p>
             </div>
         </main>
 
@@ -442,79 +370,6 @@
     </div>
 
     <script>
-        // --- COPIAR RUTA AL PORTAPAPELES ---
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Ruta copiada al portapapeles');
-            }).catch(err => {
-                console.error('Error al copiar:', err);
-            });
-        }
-
-        // --- CARGAR ÍNDICE DE ARCHIVOS DE ENSEÑANZA ---
-        async function loadTeachingMaterials() {
-            try {
-                const response = await fetch(`teaching/srgvua_25_26/index.json?v=${Date.now()}`);
-                const data = await response.json();
-                
-                // Renderizar datasets
-                const datasetsList = document.getElementById('datasets-list');
-                if (data.datasets && data.datasets.length > 0) {
-                    datasetsList.innerHTML = data.datasets.map(file => {
-                        const isGpkg = file.type === 'gpkg';
-                        const githubUrl = isGpkg ? `https://github.com/jose-rojasquiroz/jose-rojasquiroz.github.io/raw/main/teaching/srgvua_25_26/${file.path}` : '';
-                        
-                        return `
-                            <li style="list-style-type: disc;">
-                                <a href="teaching/srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
-                                <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
-                                ${isGpkg ? `<button onclick="copyToClipboard('${githubUrl}')" style="background: none; border: none; cursor: pointer; padding: 0 4px; font-size: 0.85rem; color: #2c3e50; vertical-align: middle; transition: opacity 0.2s;" title="Copiar ruta de GitHub" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='1'">📋</button>` : ''}
-                            </li>
-                        `;
-                    }).join('');
-                } else {
-                    datasetsList.innerHTML = '<li style="color: #999; font-style: italic;">No datasets available yet</li>';
-                }
-                
-                // Renderizar slides
-                const slidesList = document.getElementById('slides-list');
-                if (data.slides && data.slides.length > 0) {
-                    slidesList.innerHTML = data.slides.map(file => `
-                        <li style="list-style-type: disc;">
-                            <a href="teaching/srgvua_25_26/${file.path}" target="_blank" rel="noopener">${file.name}</a>
-                            <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
-                        </li>
-                    `).join('');
-                } else {
-                    slidesList.innerHTML = '<li style="color: #999; font-style: italic;">No materials available yet</li>';
-                }
-
-                // Renderizar notebooks
-                const notebooksList = document.getElementById('notebooks-list');
-                if (data.notebooks && data.notebooks.length > 0) {
-                    notebooksList.innerHTML = data.notebooks.map(file => {
-                        const githubUrl = `https://github.com/jose-rojasquiroz/jose-rojasquiroz.github.io/blob/main/teaching/srgvua_25_26/${file.path}`;
-                        const colabUrl = `https://colab.research.google.com/github/jose-rojasquiroz/jose-rojasquiroz.github.io/blob/main/teaching/srgvua_25_26/${file.path}`;
-                        return `
-                        <li style="list-style-type: disc;">
-                            <a href="${githubUrl}" target="_blank" rel="noopener">${file.name}</a>
-                            <span style="color: #888; font-size: 0.95rem;"> (.${file.type})</span>
-                            <a href="${colabUrl}" target="_blank" rel="noopener" title="Abrir en Google Colab" style="margin-left: 8px; vertical-align: middle; display: inline-block;">
-                                <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open in Colab" style="height: 18px; vertical-align: middle;" />
-                            </a>
-                        </li>
-                    `}).join('');
-                } else {
-                    notebooksList.innerHTML = '<li style="color: #999; font-style: italic;">No notebooks available yet</li>';
-                }
-            } catch (error) {
-                console.error('Error cargando materiales:', error);
-                document.getElementById('datasets-list').innerHTML = '<li style="color: #c00;">Error loading datasets</li>';
-                document.getElementById('slides-list').innerHTML = '<li style="color: #c00;">Error loading slides</li>';
-                document.getElementById('notebooks-list').innerHTML = '<li style="color: #c00;">Error loading notebooks</li>';
-            }
-        }
-
         function showSection(sectionId) {
             // --- 1. LÓGICA DE LA FOTO ---
             const header = document.getElementById('main-header');
@@ -548,11 +403,6 @@
             // En móvil, cerrar el menú al seleccionar sección
             document.body.classList.remove('nav-open');
 
-            // Cargar materiales de enseñanza cuando se abre esa sección
-            if (sectionId === 'teaching') {
-                loadTeachingMaterials();
-            }
-            
             // Para tener un enlace directo a cada sección
             window.history.pushState(null, null, '#' + sectionId);
         }
@@ -567,35 +417,6 @@
 
         // Revisar si hay un "hash" en la URL al cargar la página
         window.addEventListener('DOMContentLoaded', () => {
-            // --- ACORDEÓN TEACHING (estado inicial: cerrado) ---
-            const teachingAccordion = document.getElementById('teaching-accordion');
-            const teachingAccordionHeader = document.getElementById('teaching-accordion-header');
-            const teachingAccordionContent = document.getElementById('teaching-accordion-content');
-
-            const setTeachingAccordionOpen = (isOpen) => {
-                if (!teachingAccordion || !teachingAccordionHeader || !teachingAccordionContent) return;
-                teachingAccordion.classList.toggle('open', isOpen);
-                teachingAccordionHeader.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                teachingAccordionContent.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
-            };
-
-            if (teachingAccordion && teachingAccordionHeader && teachingAccordionContent) {
-                setTeachingAccordionOpen(false);
-
-                teachingAccordionHeader.addEventListener('click', () => {
-                    const isOpen = teachingAccordion.classList.contains('open');
-                    setTeachingAccordionOpen(!isOpen);
-                });
-
-                teachingAccordionHeader.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        const isOpen = teachingAccordion.classList.contains('open');
-                        setTeachingAccordionOpen(!isOpen);
-                    }
-                });
-            }
-
             const hash = window.location.hash.substring(1); // Quita el símbolo '#'
             const validSections = ['home', 'publications', 'data-projects', 'teaching'];
 
