@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Script para generar un índice JSON de los archivos en las carpetas
-de datos y PDFs del seminario de Housing Retrofit.
+Script para generar un índice JSON de los PDFs y notebooks
+del seminario de Housing Retrofit.
 """
 
 import os
@@ -32,33 +32,26 @@ def get_files_from_directory(dir_path):
 def main():
     base_path = os.path.dirname(os.path.abspath(__file__))
     teaching_path = os.path.join(base_path, 'teaching', 'srgvua_25_26')
-    data_path = os.path.join(teaching_path, 'data')
     pdfs_path = os.path.join(teaching_path, 'pdfs')
     notebooks_path = os.path.join(teaching_path, 'notebooks')
     output_file = os.path.join(teaching_path, 'index.json')
     
     # Generar índice
     index = {
-        "datasets": get_files_from_directory(data_path),
+        "datasets": [],
         "slides": get_files_from_directory(pdfs_path),
         "notebooks": get_files_from_directory(notebooks_path)
     }
     
     # Guardar JSON
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(index, f, indent=2, ensure_ascii=False)
     
     print(f"✅ Index generado: {output_file}")
-    print(f"📊 Datasets encontrados: {len(index['datasets'])}")
     print(f"📄 Slides encontrados: {len(index['slides'])}")
     print(f"📓 Notebooks encontrados: {len(index['notebooks'])}")
     
     # Mostrar contenido
-    if index['datasets']:
-        print("\n📊 Datasets:")
-        for f in index['datasets']:
-            print(f"  - {f['name']}")
-    
     if index['slides']:
         print("\n📄 Slides:")
         for f in index['slides']:
